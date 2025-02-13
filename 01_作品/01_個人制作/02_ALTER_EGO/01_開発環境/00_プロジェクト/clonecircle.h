@@ -1,6 +1,6 @@
 //==============================================
 //
-//3Dスクロールアクション[player.h]
+//ALTER_EGO[player.h]
 //Author: hiromu otake
 //
 //==============================================
@@ -12,16 +12,6 @@
 #include "input.h"
 #include <d3dx9.h>
 #include <vector>
-
-// 頂点フォーマットを定義するための構造体
-struct CUSTOMVERTEX
-{
-    D3DXVECTOR3 position;  // 頂点の位置
-    D3DXVECTOR2 texCoord;  // テクスチャ座標
-};
-
-// 頂点フォーマットの定義
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ | D3DFVF_TEX1)
 
 class CCloneCircle : public CObject3D
 {
@@ -43,7 +33,7 @@ public:
 private:
     void DrawTexture(LPDIRECT3DTEXTURE9 pTexture, D3DXVECTOR3 position, D3DXVECTOR2 scale);
 
-    LPDIRECT3DVERTEXBUFFER9 m_pVertexBuffer;
+    LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;
     D3DXVECTOR3 m_pos;
     int m_nCircleTexture;
     int m_nNormalTexture;

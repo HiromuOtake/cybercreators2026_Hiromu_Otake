@@ -1,6 +1,6 @@
 //==============================================
 //
-//3Dスクロールアクション[character.cpp]
+//ALTER_EGO[character.cpp]
 //Author: hiromu otake
 //
 //==============================================
@@ -33,7 +33,7 @@ HRESULT CCharacter::Init()
 {
 	m_pMotion = MOTION_NONE;
 
-	FILE* pFile = fopen("data\\motion_runningman.txt", "r");
+	FILE* pFile = fopen("data\\Motion\\motion.txt", "r");
 
 	int nCnt = 0;
 
@@ -71,6 +71,8 @@ HRESULT CCharacter::Init()
 			char aFilename[m_NUM_MODEL_PARTS][m_MAX_LETTER];
 			fscanf(pFile, "%s %s", &aStr[0], &aFilename[nCnt][0]);
 
+			OutputDebugStringA(aFilename[nCnt]);
+
 			m_pModelParts[nCnt] = CModelParts::Create(D3DXVECTOR3(0.0f,0.0f,0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f), &aFilename[nCnt][0]);
 
 			nCnt++;
@@ -80,6 +82,7 @@ HRESULT CCharacter::Init()
 			LoadCharacterSet(pFile);
 		}
 	}
+
 	return S_OK;
 }
 
@@ -195,23 +198,19 @@ void CCharacter::LoadPartsSet(FILE* pFile, int* nCntModel)
 		{
 			fscanf(pFile, "%s %f %f %f",
 				&aStr[0],										// =
-				&m_pModelParts[(*nCntModel)]->m_pos.x,				// x座標を読み込む
-				&m_pModelParts[(*nCntModel)]->m_pos.y,				// y座標を読み込む
+				&m_pModelParts[(*nCntModel)]->m_pos.x,			// x座標を読み込む
+				&m_pModelParts[(*nCntModel)]->m_pos.y,			// y座標を読み込む
 				&m_pModelParts[(*nCntModel)]->m_pos.z);			// z座標を読み込む
 		}
 		else if (strcmp(&aStr[0], "ROT") == 0)
 		{
 			fscanf(pFile, "%s %f %f %f",
 				&aStr[0],										// =
-				&m_pModelParts[(*nCntModel)]->m_rot.x,				// x軸向きを読み込む
-				&m_pModelParts[(*nCntModel)]->m_rot.y,				// y軸向きを読み込む
+				&m_pModelParts[(*nCntModel)]->m_rot.x,			// x軸向きを読み込む
+				&m_pModelParts[(*nCntModel)]->m_rot.y,			// y軸向きを読み込む
 				&m_pModelParts[(*nCntModel)]->m_rot.z);			// z軸向きを読み込む
 		}
 	}
-	
-	//char* a = CCharacter::GetFileName();
-
-	//m_pModelParts[(*nCntModel)] = CModelParts::Create(pos, rot, nIdx, nIdxParents, a);
 }
 
 //=====================================
@@ -227,7 +226,7 @@ char* CCharacter::GetFileName()
 //=====================================
 void CCharacter::LoadMotion(int* nCntMotion)
 {
-	FILE* pFile = fopen("data\\motion_runningman.txt", "r");
+	FILE* pFile = fopen("data\\Motion\\motion.txt", "r");
 
 	if (pFile == NULL)
 	{
@@ -464,16 +463,4 @@ D3DXVECTOR3& CCharacter::GetRot()
 CModelParts* CCharacter::GetModelParts(int idx)
 {
 	return m_pModelParts[idx];
-}
-
-void CCharacter::DebugPos()
-{
-	LPD3DXFONT pFont = CManager::GetRenderere()->GetFont();
-	RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
-	char aStr[256];
-
-	sprintf(&aStr[0], "\\[pos]:%.1f,%.1f,%.1f\\[rot]:%.1f,%.1f,%.1f"
-		, GetPos().x, GetPos().y, GetPos().z, GetRot().x, GetRot().y, GetRot().z);
-
-	pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
 }

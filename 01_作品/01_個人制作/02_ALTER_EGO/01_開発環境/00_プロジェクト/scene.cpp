@@ -1,15 +1,17 @@
 //==============================================
 //
-// 3Dスクロールアクション[scene.cpp]
+// ALTER_EGO[scene.cpp]
 // Author: hiromu otake
 //
 //==============================================
 
 #include "scene.h"
 #include "title.h"
+#include "stageselect.h"
+#include "tutorial.h"
+#include "tutorial2.h"
 #include "game.h"
 #include "result.h"
-#include "Tutorial.h"
 
 //======================================================
 // コンストラクタ
@@ -40,7 +42,7 @@ HRESULT CScene::Init()
 //======================================================
 void CScene::Uninit()
 {
-	CObject::ReleaseAll();
+	//CObject::ReleaseAll();
 }
 
 //======================================================
@@ -74,9 +76,17 @@ CScene* CScene::Create(MODE mode)
 			pScene = new CTitle;
 			break;
 
-		//case MODE_TUTORIAL:
-		//	pScene = new CTutorial;
-		//	break;
+		case MODE_STAGESELECT:
+			pScene = new CStageSelect;
+			break;
+
+		case MODE_TUTORIAL1:
+			pScene = new CTutorial;
+			break;
+
+		case MODE_TUTORIAL2:
+			pScene = new CTutorial2;
+			break;
 
 		case MODE_GAME:
 			pScene = new CGame;
@@ -87,6 +97,7 @@ CScene* CScene::Create(MODE mode)
 			break;
 		
 		default:
+			assert(false);
 			break;
 		}
 	}

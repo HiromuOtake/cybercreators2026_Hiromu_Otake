@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [main.cpp]
+// ALTER_EGO [main.cpp]
 // Auther : 大竹熙
 //
 //======================================================
@@ -154,7 +154,6 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
-
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);		//既定の処理を返す
 }

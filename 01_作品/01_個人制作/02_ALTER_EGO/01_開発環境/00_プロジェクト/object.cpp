@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [object.cpp]
+// ALTER_EGO [object.cpp]
 // Auther : 大竹熙
 //
 //======================================================
@@ -22,23 +22,22 @@ CObject::CObject(int nPriority) : m_nPriority(0), m_Type(TYPE_NONE), m_Death(fal
 {
 	m_nPriority = nPriority;
 
-	m_nNumAll++;							// 総数をカウントアップ
+	m_nNumAll++;									// 総数をカウントアップ
 
 	if (m_pTop[nPriority] == nullptr)
 	{
 		m_pTop[nPriority] = this;					// オブジェクト(自身)をリストに追加
-		m_pCur[nPriority] = this;					// オブジェクト(自身)をリストに追加
 		m_pPrev = nullptr;							// 一番最初のオブジェクトなので前も次も無し
-		m_pNext = nullptr;							// 一番最初のオブジェクトなので前も次も無し
 	}
 	else
 	{
 		CObject* pCur = m_pCur[nPriority];
 		pCur->SetNext(this);
 		m_pPrev = pCur;								// カレントを更新する前にプレビューに情報を渡す
-		m_pCur[nPriority] = this;					// 自分が最新なので自分の情報をいれる
-		m_pNext = nullptr;							// 一番最新のオブジェクトなので次は無し
 	}
+
+	m_pCur[nPriority] = this;					// 自分が最新なので自分の情報をいれる
+	m_pNext = nullptr;							// 一番最新のオブジェクトなので次は無し
 }
 
 //======================================================

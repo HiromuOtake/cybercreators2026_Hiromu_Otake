@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [renderer.cpp]
+// ALTER_EGO [renderer.cpp]
 // Auther : 大竹熙
 //
 //======================================================
@@ -10,6 +10,7 @@
 #include "object3D.h"
 #include "game.h"
 #include "Tutorial.h"
+#include "title.h"
 
 //======================================================
 // コンストラクタ
@@ -90,6 +91,8 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	}
 
 	//レンダーステートの設定
+	m_pD3DDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+	m_pD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	m_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	m_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
@@ -97,10 +100,10 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	//m_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 
 	//サンプラーステートの設定
-	m_pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	m_pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	m_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	m_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	m_pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	m_pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 
 	//テクスチャステージステートの設定
 	m_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
@@ -110,7 +113,7 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	m_pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	m_pD3DDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
-	srand((int)time(NULL));
+	srand(GetTickCount());
 
 	return S_OK;
 }
@@ -150,7 +153,7 @@ void CRenderer::Draw()
 	//画面クリア(バックバッファ＆Zバッファのクリア)
 	m_pD3DDevice->Clear(0, NULL,
 		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
+		D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
 
 	//描画開始
 	if (SUCCEEDED(m_pD3DDevice->BeginScene()))
@@ -162,7 +165,12 @@ void CRenderer::Draw()
 			//{
 			//	CTutorial::GetCamera()->SetCamera();
 			//}
-			if (pScene->GetMode() == CScene::MODE_GAME)
+			if (pScene->GetMode() == CScene::MODE_TITLE)
+			{
+				// カメラの設定
+				CTitle::GetCamera()->SetCamera();
+			}
+			else if (pScene->GetMode() == CScene::MODE_GAME)
 			{
 				// カメラの設定
 				CGame::GetCamera()->SetCamera();

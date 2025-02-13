@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [object2D.cpp]
+// ALTER_EGO [object2D.cpp]
 // Auther : 大竹熙
 //
 //======================================================
@@ -12,7 +12,7 @@
 // コンストラクタ
 //======================================================
 CObject2D::CObject2D(int nPriority) : CObject(nPriority), m_pVtxBuff(nullptr), m_pTexture(nullptr), m_fHeight(0.0f), m_fWidth(0.0f), m_fTexture(0.0f),
-m_pos(D3DXVECTOR3(0.0f, 0.0f, 0.0f)), m_posold(D3DXVECTOR3(0.0f, 0.0f, 0.0f)), m_colorFade(0.0f), m_fAnglePlayer(0.0f), m_fLengthPlayer(0.0f)
+m_pos(D3DXVECTOR3(0.0f, 0.0f, 0.0f)), m_posold(D3DXVECTOR3(0.0f, 0.0f, 0.0f)), m_colorFade(1.0f), m_fAnglePlayer(0.0f), m_fLengthPlayer(0.0f)
 {
 
 }
@@ -30,14 +30,8 @@ CObject2D::~CObject2D()
 //======================================================
 HRESULT CObject2D::Init()
 {
-	LPDIRECT3DDEVICE9 pDevice;		//デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();;		//デバイスへのポインタ
 
-	CRenderer* pRenderer = CManager::GetRenderere();
-
-	//デバイスの取得
-	pDevice = pRenderer->GetDevice();
-
-	m_colorFade = 1.0f;
 
 	//対角線の長さを算出する
 	m_fLengthPlayer = sqrtf(m_fWidth * m_fWidth + m_fHeight * m_fHeight) / 2.0f;
@@ -82,10 +76,10 @@ HRESULT CObject2D::Init()
 	pVtx[3].rhw = 1.0f;
 
 	//頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[0].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, m_colorFade);
+	pVtx[1].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, m_colorFade);
+	pVtx[2].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, m_colorFade);
+	pVtx[3].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, m_colorFade);
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -167,6 +161,10 @@ void CObject2D::Draw()
 	//デバイスの取得
 	pDevice = pRenderer->GetDevice();
 
+	// Z バッファを無効化
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
 
@@ -178,6 +176,10 @@ void CObject2D::Draw()
 
 	//ポリゴンの描画
 	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+	// Z バッファを再度有効化
+	pDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+	pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
 }
 
 //======================================================
@@ -239,8 +241,36 @@ D3DXVECTOR3* CObject2D::GetPosOld()
 
 //======================================================
 // 向きの取得
-//======================================================
+//======================================================i
 D3DXVECTOR3* CObject2D::GetRot()
 {
 	return &m_rot; 
+}
+
+//======================================================
+// Object2Dの生成
+//======================================================i
+CObject2D* CObject2D::Create(LPDIRECT3DTEXTURE9 pTex, D3DXVECTOR3 pos, float fWidth, float fHeight,float fTexture, float fColor)
+{
+	CObject2D* pObject2D = new CObject2D;
+
+	if (pObject2D != nullptr)
+	{
+		pObject2D->BindTexture(pTex);
+		pObject2D->SetPos(pos);
+		pObject2D->SetWidthHeight(fWidth, fHeight);
+		pObject2D->SetTexture(fTexture);
+		pObject2D->SetColor(fColor);
+		pObject2D->Init();
+		pObject2D->SetUseDeath(true);
+	}
+	return  pObject2D;
+}
+
+//=========================================
+// 死亡フラグ設定処理
+//=========================================
+void CObject2D::SetDeath()
+{
+	CObject::SetDeath();
 }

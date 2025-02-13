@@ -1,6 +1,6 @@
 //==============================================
 //
-//3Dスクロールアクション[player.h]
+//ALTER_EGO[clonecircle.h]
 //Author: hiromu otake
 //
 //==============================================
@@ -15,7 +15,7 @@
 // コンストラクタ
 //==============================================
 CCloneCircle::CCloneCircle(int nPriority): CObject3D(nPriority), m_pos{ 0.0f, 0.0f, 0.0f }, m_nSelectedIndex(0),m_nCircleTexture(0), m_nNormalTexture(0), m_nSelectTexture(0)
-, m_pVertexBuffer(nullptr), m_Keyboard(nullptr), m_bUseDeath(false)
+, m_pVtxBuff(nullptr), m_Keyboard(nullptr), m_bUseDeath(true)
 {
 
 }
@@ -40,7 +40,7 @@ HRESULT CCloneCircle::Init()
         D3DUSAGE_WRITEONLY,
         D3DFVF_CUSTOMVERTEX,
         D3DPOOL_MANAGED, 
-        &m_pVertexBuffer,
+        &m_pVtxBuff,
         NULL);
 
     // テクスチャの読み込み
@@ -55,14 +55,14 @@ HRESULT CCloneCircle::Init()
 
     CUSTOMVERTEX* vertices;
 
-    m_pVertexBuffer->Lock(0, 0, (void**)&vertices, 0);
+    m_pVtxBuff->Lock(0, 0, (void**)&vertices, 0);
 
     vertices[0] = { D3DXVECTOR3(-75.0f,  75.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };
     vertices[1] = { D3DXVECTOR3(75.0f,  75.0f, 0.0f), D3DXVECTOR2(1.0f, 0.0f) };
     vertices[2] = { D3DXVECTOR3(-75.0f, -75.0f, 0.0f), D3DXVECTOR2(0.0f, 1.0f) };
     vertices[3] = { D3DXVECTOR3(75.0f, -75.0f, 0.0f), D3DXVECTOR2(1.0f, 1.0f) };
 
-    m_pVertexBuffer->Unlock();
+    m_pVtxBuff->Unlock();
 
     return S_OK;
 }
@@ -72,10 +72,10 @@ HRESULT CCloneCircle::Init()
 //==============================================
 void CCloneCircle::Uninit()
 {
-    if (m_pVertexBuffer)
+    if (m_pVtxBuff)
     {
-        m_pVertexBuffer->Release();
-        m_pVertexBuffer = nullptr;
+        m_pVtxBuff->Release();
+        m_pVtxBuff = nullptr;
     }
 
     CObject3D::Uninit();
@@ -107,10 +107,9 @@ void CCloneCircle::Draw()
 
     // Zバッファを一時的に無効化
     pDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-
     pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
-    if (CManager::IsPaused())
+    if (!m_bUseDeath)
     {
         // 円描画
         LPDIRECT3DTEXTURE9 pCircleTex = CManager::GetTexture()->GetAddress(m_nCircleTexture);
@@ -168,7 +167,7 @@ void CCloneCircle::DrawTexture(LPDIRECT3DTEXTURE9 pTexture, D3DXVECTOR3 position
     LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();
 
     //頂点バッファをデータストリームに設定
-    pDevice->SetStreamSource(0, m_pVertexBuffer, 0, sizeof(CUSTOMVERTEX));
+    pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(CUSTOMVERTEX));
     // 頂点フォーマットを設定
     pDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 
@@ -241,7 +240,7 @@ void CCloneCircle::Activate()
 //=========================================
 void CCloneCircle::SetDeath()
 {
-    // クローン円の描画を無効化
+    // クローンサークルの描画を無効化
     m_bUseDeath = true; // フラグで描画を停止
 
     CObject::SetDeath();

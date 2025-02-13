@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[player.cpp]
+// ALTER_EGO[clone.cpp]
 // Author: hiromu otake
 //
 //==============================================
@@ -21,8 +21,8 @@ bool CClone::m_bUse = true;
 //==============================================
 // コンストラクタ
 //==============================================
-CClone::CClone(int nPriority) : CCharacter(nPriority), m_bIsLanding(false), m_bJumping(false), m_bIsRight(false), m_Keyboard(nullptr), m_JoyPad(nullptr), m_pModelParts{}
-, m_nModelIdx(0), m_nTextureIdx(0), m_nLife(0), m_nType(PLAYER_NONE), m_nDeathTimer(0), m_JumpCnt(0)
+CClone::CClone(int nPriority) : CCharacter(nPriority), m_bLanding(false), m_bJumping(false), m_bStopClone(false), m_Keyboard(nullptr), m_JoyPad(nullptr), m_pModelParts{}
+, m_nModelIdx(0), m_nTextureIdx(0), m_nLife(0), m_nType(PLAYER_NONE), m_nDeathTimer(0), m_nJumpCnt(0)
 {
 
 }
@@ -40,13 +40,12 @@ CClone::~CClone()
 //==============================================
 HRESULT CClone::Init()
 {
-	m_bIsRight = true;
 	m_nType = PLAYER_NORMAL;
 
 	m_Keyboard = CManager::GetKeyboard();
 	m_JoyPad = CManager::GetJoyPad();
 
-	m_nLife = m_PLAYER_LIFE;
+	m_nLife = m_CLONE_LIFE;
 
 	int nCnt = 0;
 
@@ -58,7 +57,7 @@ HRESULT CClone::Init()
 	m_min = { FLT_MAX, FLT_MAX, FLT_MAX };
 	m_max = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
-	for (int nCount = 0; nCount < 15; nCount++)
+	for (int nCount = 0; nCount < m_NUM_MODEL_PARTS; nCount++)
 	{
 		D3DXVECTOR3& Partspos = CCharacter::GetModelParts(nCount)->GetPos();
 		D3DXVECTOR3& pPos = CCharacter::GetPos();
@@ -119,106 +118,120 @@ void CClone::Update()
 		return;
 	}
 
-	D3DXVECTOR3* pCamera = CCamera::GetRot();
-
-	D3DXVECTOR3& pPos = CCharacter::GetPos();
-	D3DXVECTOR3& pPosOld = CCharacter::GetPosOld();
-	D3DXVECTOR3& pRot = CCharacter::GetRot();
-
-	pPosOld = pPos;
-
-	if (m_nType == PLAYER_NORMAL)
+	if (m_bStopClone == true)
 	{
-
-		if (m_Keyboard->GetPress(DIK_D) == true || m_JoyPad->GetJoyPadPress(CInput::JOYKEY_RIGHT) == true)
+		if (m_Keyboard->GetTrigger(DIK_RETURN) || m_JoyPad->GetJoyPadPress(CInput::JOYKEY_B) == true)
 		{
-			SetMotion(MOTION_MOVE);
-
-			m_move.x += sinf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_PLAYER_SPEED;
-			m_move.z += cosf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_PLAYER_SPEED;
-
-			pRot.y = pCamera->y + D3DX_PI * -0.5f;
-		}
-		else if (m_Keyboard->GetPress(DIK_A) == true || m_JoyPad->GetJoyPadPress(CInput::JOYKEY_LEFT) == true)
-		{
-			SetMotion(MOTION_MOVE);
-
-			m_move.x += sinf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_PLAYER_SPEED;
-			m_move.z += cosf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_PLAYER_SPEED;
-
-			pRot.y = pCamera->y + D3DX_PI * +0.5f;
-		}
-		else
-		{
-			CCharacter::SetMotion(MOTION_NEUTRAL);
-		}
-
-		if (m_bIsLanding != false)
-		{
-			if (m_Keyboard->GetTrigger(DIK_SPACE) == true || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_A) == true)
-			{
-				m_move.y = +m_PLAYER_JUMP;
-			}
+			CManager::SetPaused(false); // ポーズ解除
 		}
 	}
+	else if(m_bStopClone == false)
+	{
+		D3DXVECTOR3* pCamera = CCamera::GetRot();
+		D3DXVECTOR3& pPos = CCharacter::GetPos();
+		D3DXVECTOR3& pPosOld = CCharacter::GetPosOld();
+		D3DXVECTOR3& pRot = CCharacter::GetRot();
 
-	m_move.y -= 1.0f;
+		pPosOld = pPos;
 
-	//位置を更新
-	pPos.z += m_move.z;
-
-	//移動量を更新(減衰させる)
-	m_move.x += (0.0f - m_move.x) * 0.1f;
-	//m_move.y += (0.0f - m_move.y) * 0.1f;
-	m_move.z += (0.0f - m_move.z) * 0.1f;
-
-	bool bIsLanding = false;
-
-	pPos.x += m_move.x;
-
-	for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
-	{// プライオリティ分回す
-
-		CObject* pObj = CObject::GetTop(nCntPrio);
-
-		while (pObj != nullptr)
+		if (m_nType == PLAYER_NORMAL)
 		{
-			if (IsBadReadPtr(pObj, sizeof(CObject)))
+
+			if (m_Keyboard->GetPress(DIK_D) == true || m_JoyPad->GetJoyPadPress(CInput::JOYKEY_RIGHT) == true)
 			{
-				break;
+				SetMotion(MOTION_MOVE);
+
+				m_move.x += sinf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_CLONE_SPEED;
+				m_move.z += cosf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_CLONE_SPEED;
+
+				pRot.y = pCamera->y + D3DX_PI * -0.5f;
+			}
+			else if (m_Keyboard->GetPress(DIK_A) == true || m_JoyPad->GetJoyPadPress(CInput::JOYKEY_LEFT) == true)
+			{
+				SetMotion(MOTION_MOVE);
+
+				m_move.x += sinf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_CLONE_SPEED;
+				m_move.z += cosf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_CLONE_SPEED;
+
+				pRot.y = pCamera->y + D3DX_PI * +0.5f;
+			}
+			else
+			{
+				CCharacter::SetMotion(MOTION_NEUTRAL);
 			}
 
-			// 左右の当たり判定
-			CollisionLEFTRIGHT(pObj);
-			pObj = pObj->GetNext();
-		}
-	}
-
-	pPos.y += m_move.y;
-
-	for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
-	{// プライオリティ分回す
-
-		CObject* pObj = CObject::GetTop(nCntPrio);
-
-		while (pObj != nullptr)
-		{
-			if (IsBadReadPtr(pObj, sizeof(CObject)))
+			if (m_nJumpCnt <= 0)
 			{
-				break;
+				if (m_Keyboard->GetTrigger(DIK_SPACE) == true || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_A) == true)
+				{
+					m_move.y = +m_CLONE_JUMP;
+					m_nJumpCnt++;
+
+					CSound* pSound = CManager::GetSound();
+
+					pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_JUMP);
+				}
 			}
-
-			// 上下の当たり判定
-			CollisionUPDOWN(bIsLanding, pObj);
-			pObj = pObj->GetNext();
 		}
+
+		m_move.y -= 1.0f;
+
+		//位置を更新
+		pPos.z += m_move.z;
+
+		//移動量を更新(減衰させる)
+		m_move.x += (0.0f - m_move.x) * 0.1f;
+		//m_move.y += (0.0f - m_move.y) * 0.1f;
+		m_move.z += (0.0f - m_move.z) * 0.1f;
+
+		bool bIsLanding = false;
+
+		pPos.x += m_move.x;
+
+		for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
+		{// プライオリティ分回す
+
+			CObject* pObj = CObject::GetTop(nCntPrio);
+
+			while (pObj != nullptr)
+			{
+				if (IsBadReadPtr(pObj, sizeof(CObject)))
+				{
+					break;
+				}
+
+				// 左右の当たり判定
+				CollisionLEFTRIGHT(pObj);
+				pObj = pObj->GetNext();
+			}
+		}
+
+		pPos.y += m_move.y;
+
+		for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
+		{// プライオリティ分回す
+
+			CObject* pObj = CObject::GetTop(nCntPrio);
+
+			while (pObj != nullptr)
+			{
+				if (IsBadReadPtr(pObj, sizeof(CObject)))
+				{
+					break;
+				}
+
+				// 上下の当たり判定
+				CollisionUPDOWN(bIsLanding, pObj);
+				pObj = pObj->GetNext();
+			}
+		}
+
+		m_bLanding = bIsLanding;
+
+		CCharacter::PlayerMotion();
+
+		CCharacter::Update();
 	}
-
-	m_bIsLanding = bIsLanding;
-
-	CCharacter::PlayerMotion();
-
-	CCharacter::Update();
 }
 
 //==============================================
@@ -241,11 +254,16 @@ void CClone::Draw()
 //=====================================================
 bool CClone::CollisionUPDOWN(bool& bIsLanding, CObject* pObj)
 {
+	// モデルパーツのワールド座標を取得
+	//D3DXVECTOR3 pPos = { CCharacter::GetModelParts(1)->GetWoarldMatrix()._41 ,CCharacter::GetModelParts(1)->GetWoarldMatrix()._42 ,CCharacter::GetModelParts(1)->GetWoarldMatrix()._43 };
+
 	D3DXVECTOR3& pPos = CCharacter::GetPos();
 	// プレイヤーの過去の座標を取得
 	D3DXVECTOR3& pPosOld = CCharacter::GetPosOld();
 	// モデルパーツのサイズを取得
 	D3DXVECTOR3 pSize = CCharacter::GetModelParts(1)->GetSize();
+
+	//D3DXVECTOR3 PartsPosOld = pPosOld + pPos;
 
 	D3DXVECTOR3 CloneSize = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
@@ -279,90 +297,25 @@ bool CClone::CollisionUPDOWN(bool& bIsLanding, CObject* pObj)
 
 				if (pBlockType == CBlock::BLOCK::BLOCK_NORMAL)
 				{
-					// X方向およびZ方向の重なりを一度だけチェック
-					bool isXOverlap = (pPos.x + CloneSize.x * m_HALF_SIZE > pBlockPos.x - pBlockSize.x * m_HALF_SIZE) &&
-						(pPos.x - CloneSize.x * m_HALF_SIZE < pBlockPos.x + pBlockSize.x * m_HALF_SIZE);
-
-					bool isZOverlap = (pPos.z + CloneSize.z * m_HALF_SIZE > pBlockPos.z - pBlockSize.z * m_HALF_SIZE) &&
-						(pPos.z - CloneSize.z * m_HALF_SIZE < pBlockPos.z + pBlockSize.z * m_HALF_SIZE);
-
-					if (isXOverlap && isZOverlap)
-					{
-						// 上側の当たり判定
-						if (pPos.y < pBlockPos.y + pBlockSize.y * m_HALF_SIZE &&
-							pPosOld.y >= pBlockPos.y + pBlockSize.y * m_HALF_SIZE)
-						{
-							// プレイヤーをブロックの上に押し戻し
-							pPos.y = pBlockPos.y + pBlockSize.y * m_HALF_SIZE;
-							m_move.y = 0.0f;
-							bIsLanding = true; // 着地状態を設定
-							m_JumpCnt = 0;
-						}
-						// 下側の当たり判定
-						else if (pPos.y + CloneSize.y > pBlockPos.y - pBlockSize.y &&
-							pPosOld.y + CloneSize.y <= pBlockPos.y - pBlockSize.y)
-						{
-							// プレイヤーをブロックの下に押し戻し
-							pPos.y = pBlockPos.y - pBlockSize.y - CloneSize.y;
-							m_move.y = 0.0f;
-						}
-					}
+					m_pCollision->CollisionPushBoxUpDown(pPos, pPosOld, CloneSize, pBlockPos, pBlockSize, m_move, bIsLanding, m_nJumpCnt);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_DOOR)
 				{
-					// X方向およびZ方向の重なりを一度だけチェック
-					bool isXOverlap = (pPos.x + CloneSize.x * m_HALF_SIZE > pBlockPos.x - pBlockSize.x * m_HALF_SIZE) &&
-						(pPos.x - CloneSize.x * m_HALF_SIZE < pBlockPos.x + pBlockSize.x * m_HALF_SIZE);
-
-					if (isXOverlap)
+					CBlockDoor* pDoor = dynamic_cast<CBlockDoor*>(pObj);
+					if (pDoor && pDoor->IsOpen())
 					{
-						// 上側の当たり判定
-						if (pPos.y < pBlockPos.y + pBlockSize.y * m_HALF_SIZE &&
-							pPosOld.y >= pBlockPos.y + pBlockSize.y * m_HALF_SIZE)
-						{
-							// プレイヤーをブロックの上に押し戻し
-							pPos.y = pBlockPos.y + pBlockSize.y * m_HALF_SIZE;
-							m_move.y = 0.0f;
-							bIsLanding = true; // 着地状態を設定
-							m_JumpCnt = 0;
-						}
-						// 下側の当たり判定
-						else if (pPos.y + CloneSize.y > pBlockPos.y - pBlockSize.y &&
-							pPosOld.y + CloneSize.y <= pBlockPos.y - pBlockSize.y)
-						{
-							// プレイヤーをブロックの下に押し戻し
-							pPos.y = pBlockPos.y - pBlockSize.y - CloneSize.y;
-							m_move.y = 0.0f;
-						}
+						// 扉が開いている場合は当たり判定をスキップ
+						return false;
 					}
+					m_pCollision->CollisionPushBoxUpDown(pPos, pPosOld, CloneSize, pBlockPos, pBlockSize, m_move, bIsLanding, m_nJumpCnt);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_BUTTON)
 				{
-					// X方向およびZ方向の重なりを一度だけチェック
-					bool isXOverlap = (pPos.x + CloneSize.x * m_HALF_SIZE > pBlockPos.x - pBlockSize.x * m_HALF_SIZE) &&
-						(pPos.x - CloneSize.x * m_HALF_SIZE < pBlockPos.x + pBlockSize.x * m_HALF_SIZE);
-
-					if (isXOverlap)
-					{
-						// 上側の当たり判定
-						if (pPos.y < pBlockPos.y + pBlockSize.y * m_HALF_SIZE &&
-							pPosOld.y >= pBlockPos.y + pBlockSize.y * m_HALF_SIZE)
-						{
-							// プレイヤーをブロックの上に押し戻し
-							pPos.y = pBlockPos.y + pBlockSize.y * m_HALF_SIZE;
-							m_move.y = 0.0f;
-							bIsLanding = true; // 着地状態を設定
-							m_JumpCnt = 0;
-						}
-						// 下側の当たり判定
-						else if (pPos.y + CloneSize.y > pBlockPos.y - pBlockSize.y &&
-							pPosOld.y + CloneSize.y <= pBlockPos.y - pBlockSize.y)
-						{
-							// プレイヤーをブロックの下に押し戻し
-							pPos.y = pBlockPos.y - pBlockSize.y - CloneSize.y;
-							m_move.y = 0.0f;
-						}
-					}
+					m_pCollision->CollisionPushBoxUpDown(pPos, pPosOld, CloneSize, pBlockPos, pBlockSize, m_move, bIsLanding, m_nJumpCnt);
+				}
+				else if (pBlockType == CBlock::BLOCK::BLOCK_GOAL)
+				{
+					m_pCollision->CollisionHitTriggerBoxUpDown(pPos, pPosOld, CloneSize, pBlockPos, pBlockSize, m_bUse);
 				}
 			}
 		}
@@ -395,6 +348,7 @@ void CClone::CollisionLEFTRIGHT(CObject* pObj)
 		if (type == CObject::TYPE::TYPE_BLOCK)
 		{// typeがBLOCKなら
 
+
 			CBlock* pBlock = dynamic_cast<CBlock*>(pObj);
 			if (pBlock != nullptr)
 			{
@@ -413,85 +367,30 @@ void CClone::CollisionLEFTRIGHT(CObject* pObj)
 
 				if (pBlockType == CBlock::BLOCK::BLOCK_NORMAL)
 				{
-					// Y方向およびZ方向の重なりを一度だけチェック
-					bool isYOverlap = (pPos.y + CloneSize.y > pBlockPos.y - pBlockSize.y * m_HALF_SIZE) &&
-						(pPos.y + CloneSize.y <= pBlockPos.y + pBlockSize.y * m_HALF_SIZE);
-
-					if (isYOverlap)
-					{
-						//右側の当たり判定
-						if (pPos.x - CloneSize.x * m_HALF_SIZE < pBlockPos.x + pBlockSize.x * m_HALF_SIZE &&
-							pPosOld.x - CloneSize.x * m_HALF_SIZE >= pBlockPos.x + pBlockSize.x * m_HALF_SIZE)
-						{
-							pPos.x = pBlockPos.x + pBlockSize.x * m_HALF_SIZE + CloneSize.x * m_HALF_SIZE;
-						}
-						//左側の当たり判定
-						else if (pPos.x + CloneSize.x * m_HALF_SIZE > pBlockPos.x - pBlockSize.x * m_HALF_SIZE &&
-							pPosOld.x + CloneSize.x * m_HALF_SIZE <= pBlockPos.x - pBlockSize.x * m_HALF_SIZE)
-						{
-							pPos.x = pBlockPos.x - pBlockSize.x * m_HALF_SIZE - CloneSize.x * m_HALF_SIZE;
-						}
-					}
+					m_pCollision->CollisionPushBoxLeftRight(pPos, pPosOld, CloneSize, pBlockPos, BlockSize);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_DOOR)
 				{
-					// Y方向およびZ方向の重なりを一度だけチェック
-					bool isYOverlap = (pPos.y + CloneSize.y > pBlockPos.y - pBlockSize.y * m_HALF_SIZE) &&
-						(pPos.y + CloneSize.y <= pBlockPos.y + pBlockSize.y * m_HALF_SIZE);
-
-					if (isYOverlap)
+					CBlockDoor* pDoor = dynamic_cast<CBlockDoor*>(pObj);
+					if (pDoor && pDoor->IsOpen())
 					{
-						//右側の当たり判定
-						if (pPos.x - CloneSize.x * m_HALF_SIZE < pBlockPos.x + pBlockSize.x * m_HALF_SIZE &&
-							pPosOld.x - CloneSize.x * m_HALF_SIZE >= pBlockPos.x + pBlockSize.x * m_HALF_SIZE)
-						{
-							pPos.x = pBlockPos.x + pBlockSize.x * m_HALF_SIZE + (CloneSize.x * m_HALF_SIZE);
-							m_move.x = 0.0f;
-						}
-						//左側の当たり判定
-						else if (pPos.x + CloneSize.x * m_HALF_SIZE > pBlockPos.x - pBlockSize.x * m_HALF_SIZE &&
-							pPosOld.x + CloneSize.x * m_HALF_SIZE <= pBlockPos.x - pBlockSize.x * m_HALF_SIZE)
-						{
-							pPos.x = pBlockPos.x - pBlockSize.x * m_HALF_SIZE - (CloneSize.x * m_HALF_SIZE);
-							m_move.x = 0.0f;
-						}
+						// 扉が開いている場合は当たり判定をスキップ
+						return;
 					}
+
+					m_pCollision->CollisionPushBoxLeftRight(pPos, pPosOld, CloneSize, pBlockPos, BlockSize);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_BUTTON)
 				{
-					// Y方向およびZ方向の重なりを一度だけチェック
-					bool isYOverlap = (pPos.y + CloneSize.y > pBlockPos.y - pBlockSize.y * m_HALF_SIZE) &&
-						(pPos.y + CloneSize.y <= pBlockPos.y + pBlockSize.y * m_HALF_SIZE);
-
-					if (isYOverlap)
-					{
-						//右側の当たり判定
-						if (pPos.x - CloneSize.x * m_HALF_SIZE < pBlockPos.x + pBlockSize.x * m_HALF_SIZE &&
-							pPosOld.x - CloneSize.x * m_HALF_SIZE >= pBlockPos.x + pBlockSize.x * m_HALF_SIZE)
-						{
-							pPos.x = pBlockPos.x + pBlockSize.x * m_HALF_SIZE + (CloneSize.x * m_HALF_SIZE);
-							m_move.x = 0.0f;
-						}
-						//左側の当たり判定
-						else if (pPos.x + CloneSize.x * m_HALF_SIZE > pBlockPos.x - pBlockSize.x * m_HALF_SIZE &&
-							pPosOld.x + CloneSize.x * m_HALF_SIZE <= pBlockPos.x - pBlockSize.x * m_HALF_SIZE)
-						{
-							pPos.x = pBlockPos.x - pBlockSize.x * m_HALF_SIZE - (CloneSize.x * m_HALF_SIZE);
-							m_move.x = 0.0f;
-						}
-					}
+					m_pCollision->CollisionPushBoxLeftRight(pPos, pPosOld, CloneSize, pBlockPos, BlockSize);
+				}
+				else if (pBlockType == CBlock::BLOCK::BLOCK_GOAL)
+				{
+					m_pCollision->CollisionHitTriggerBoxLeftRight(pPos, pPosOld, CloneSize, pBlockPos, BlockSize, m_bUse);
 				}
 			}
 		}
 	}
-}
-
-//=====================================================
-// ゴール情報の取得
-//=====================================================
-bool& CClone::GetGoal()
-{
-	return m_bUse;
 }
 
 //=====================================================
@@ -503,7 +402,7 @@ CClone* CClone::Create(D3DXVECTOR3 pos)
 
 	if (pClone != nullptr)
 	{
-		pClone->SetType(TYPE_PLAYER);
+		pClone->SetType(TYPE_CLONE);
 		pClone->Init();
 		pClone->SetPos(pos);
 		pClone->SetUseDeath(true);

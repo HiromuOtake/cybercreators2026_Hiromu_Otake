@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[objectX.cpp]
+// ALTER_EGO[objectX.cpp]
 // Author: hiromu otake
 //
 //==============================================
@@ -33,14 +33,7 @@ CObjectX::~CObjectX()
 // 初期設定
 //==============================================
 HRESULT CObjectX::Init()
-{
-	LPDIRECT3DDEVICE9 pDevice;		//デバイスへのポインタ
-
-	CRenderer* pRenderer = CManager::GetRenderere();
-
-	//デバイスの取得
-	pDevice = pRenderer->GetDevice();
-	
+{	
 	//頂点数の取得
 	m_nNumVtx = m_pMesh->GetNumVertices();
 
@@ -137,25 +130,10 @@ void CObjectX::Update()
 //==============================================
 void CObjectX::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();					//計算用マトリックス
-	D3DMATERIAL9 matDef;																									//現在のマテリアル保存用
-	D3DXMATERIAL* pMat;																										//マテリアルデータへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();		// 計算用マトリックス
+	D3DMATERIAL9 matDef;													// 現在のマテリアル保存用
+	D3DXMATERIAL* pMat;														// マテリアルデータへのポインタ
 	D3DXMATRIX mtxScale, mtxRot, mtxTrans;
-
-	////ワールドマトリックスの初期化
-	//D3DXMatrixIdentity(&m_mtxWorld);
-
-	//// スケールを反映
-	//D3DXMatrixScaling(&mtxScale, m_scale.x, m_scale.y, m_scale.z);
-	//D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxScale);
-
-	////向きを反映
-	//D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y,m_rot.x, m_rot.z);
-	//D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxRot);
-
-	////位置を反映
-	//D3DXMatrixTranslation(&mtxTrans, m_pos.x, m_pos.y, m_pos.z);
-	//D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxTrans);
 
 	//ワールドマトリックスの設定
 	pDevice->SetTransform(D3DTS_WORLD, &m_mtxWorld);
@@ -183,32 +161,6 @@ void CObjectX::Draw()
 
 	//保存していたマテリアルを返す
 	pDevice->SetMaterial(&matDef);
-
-	//LPDIRECT3DDEVICE9 pDevice;							//デバイスへのポインタ
-	//CRenderer* pRenderer = CManager::GetRenderere();
-	//pDevice = pRenderer->GetDevice();					//デバイスの取得
-	//
-	//pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, TRUE);
-	//
-	//D3DXMATRIX mtxRot, mtxTrans, mtxScale;						//計算用マトリックス
-	//D3DMATERIAL9 matDef;								//現在のマテリアル保存用
-	//D3DXMATERIAL* pMat;									//マテリアルデータへのポインタ
-	//
-	//D3DXMATRIX& matrix = GetMatrix();
-	//D3DXVECTOR3& rot = GetRot();
-	//D3DXVECTOR3& pos = GetPos();
-	//
-	////ワールドマトリックスの初期化
-	//D3DXMatrixIdentity(&matrix);
-	//
-	//static constexpr float SCALE = 1.0f;
-	//
-	//// スケールを反映
-	//D3DXMatrixScaling(&mtxScale, SCALE, SCALE, SCALE);
-	//D3DXMatrixMultiply(&matrix, &matrix, &mtxScale);
-	//
-	//pDevice->SetRenderState(D3DRS_NORMALIZENORMALS, FALSE);
-
 }
 
 //======================================================

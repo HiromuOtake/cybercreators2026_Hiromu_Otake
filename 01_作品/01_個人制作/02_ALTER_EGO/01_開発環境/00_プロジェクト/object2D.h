@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [object2D.h]
+// ALTER_EGO [object2D.h]
 // Auther : 大竹熙
 //
 //======================================================
@@ -22,7 +22,7 @@ public:
 		D3DCOLOR col;		//頂点カラー
 		D3DXVECTOR2 tex;	//テクスチャ座標
 	}VERTEX_2D;
-	CObject2D(int nPriority = 1);
+	CObject2D(int nPriority = 9);
 	~CObject2D()override;
 	HRESULT Init()override;
 	void Uninit()override;
@@ -33,6 +33,8 @@ public:
 	void SetWidthHeight(float fWidth, float fHeight);
 	void SetColor(float fColor);
 	void SetTexture(float fTexture);
+	static CObject2D* Create(LPDIRECT3DTEXTURE9 pTex, D3DXVECTOR3 pos, float fWidth, float fHeight, float fTexture, float fColor);
+	void SetDeath()override;
 	D3DXVECTOR3& GetPos();
 	D3DXVECTOR3* GetPosOld();
 	D3DXVECTOR3* GetRot();

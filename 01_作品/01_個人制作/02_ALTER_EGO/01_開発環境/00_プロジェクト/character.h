@@ -1,6 +1,6 @@
 //==============================================
 //
-//3Dスクロールアクション[character.h]
+//ALTER_EGO[character.h]
 //Author: hiromu otake
 //
 //==============================================
@@ -12,7 +12,7 @@ class CCharacter : public CObjectX
 {
 public:
 	static const int m_NUM_MOTION = 6;
-	static const int m_NUM_MODEL_PARTS = 15;
+	static const int m_NUM_MODEL_PARTS = 10;
 	static const int m_MAX_LETTER = 496;
 	typedef enum
 	{
@@ -34,7 +34,6 @@ public:
 		D3DXVECTOR3 rot;							 // モーションの移動量
 	}KEY;
 
-
 	//==============================================
 	//キーセットの構造体
 	//==============================================
@@ -43,7 +42,6 @@ public:
 		float nFlame;					// モーションが動く時間
 		KEY aKey[m_NUM_MODEL_PARTS];
 	}KEYSET;
-
 
 	//==============================================
 	//モーションセットの構造体
@@ -76,7 +74,6 @@ public:
 	D3DXVECTOR3& GetPosOld();
 	D3DXVECTOR3& GetRot();
 	CModelParts* GetModelParts(int idx);
-	void DebugPos();
 private:
 	D3DXMATRIX m_mtxWorld;
 	D3DXVECTOR3 m_pos;

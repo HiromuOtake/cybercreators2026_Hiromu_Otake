@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[model.h]
+// ALTER_EGO[model.h]
 // Author: hiromu otake
 //
 //==============================================
@@ -16,17 +16,14 @@ public:
 		LPD3DXBUFFER m_pBuffMat;		// マテリアルへのポインタ
 		DWORD m_dwNumMat;				// マテリアルの数
 		LPD3DXMESH m_pMesh;				// メッシュへのポインタ
-		LPDIRECT3DTEXTURE9 m_pTexture[m_MAXTEXTURE];
 	}ModelInfo;
 	CModel();
 	~CModel();
 	void Unload();								// モデル破棄
 	int Regist(const char* pTextureName);		// モデル登録
-	ModelInfo GetAddress(int nIdx);	// モデル取得
 	LPD3DXBUFFER GetBuffMat(int nIdx);
 	DWORD GetNumMat(int nIdx);
 	LPD3DXMESH GetMesh(int nIdx);
-	LPDIRECT3DTEXTURE9* GetTexture(int nIdx);
 	static const int m_MAXMODEL = 126;
 	static const int m_MAXSENTENCE = 126;
 private:

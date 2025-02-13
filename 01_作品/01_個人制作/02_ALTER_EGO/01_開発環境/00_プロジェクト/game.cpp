@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[game.cpp]
+// ALTER_EGO[game.cpp]
 // Author: hiromu otake
 //
 //==============================================
@@ -17,6 +17,7 @@
 #include "sound.h"
 #include "modelparts.h"
 #include "character.h"
+#include "pause.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -54,15 +55,22 @@ CGame::~CGame()
 //======================================================
 HRESULT CGame::Init()
 {
+	m_Keyboard = CManager::GetKeyboard();
+	m_JoyPad = CManager::GetJoyPad();
+
 	CScene::Init();
+
+	CBg::Create(CScene::MODE::MODE_GAME);
 
 	m_pCamera = CCamera::Create();
 
-	//CScene* pScene = CManager::GetScene();
+	CSound* pSound = CManager::GetSound();
 
-	std::string filename;
+	pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_BGM001);
 
-	filename = "data\\SetStage001.txt";
+	std::string filename = CManager::GetNextStage();
+
+	//filename = "data\\Stage\\SetStage002.txt";
 
 	std::ifstream ifs(filename);
 	if (!ifs)
@@ -104,7 +112,8 @@ HRESULT CGame::Init()
 				CreateObject(type, key, D3DXVECTOR3(x * BLOCK_WIDTH, -y * BLOCK_HEIGHT, 0.0f), rotation);
 			}
 			x++;
-		}	x = 0;
+		}
+		x = 0;
 		y++;
 	}
 	return S_OK;
@@ -127,7 +136,7 @@ void CGame::Uninit()
 
 	CSound* pSound = CManager::GetSound();
 
-	pSound->StopSound(CSound::SOUND_LABEL::SOUND_LABEL_BGM000);
+	pSound->StopSound(CSound::SOUND_LABEL::SOUND_LABEL_BGM001);
 }
 
 //======================================================
@@ -138,6 +147,16 @@ void CGame::Update()
 	m_pCamera->Update();
 
 	CScene::Update();
+
+	if (m_Keyboard->GetTrigger(DIK_P) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_START) == true)
+	{
+		CManager::SetPaused(true);
+		CPause::Create();
+	}
+	if (m_Keyboard->GetTrigger(DIK_R) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_X) == true)
+	{
+		CManager::SetMode(CScene::MODE::MODE_GAME);
+	}
 }
 
 //======================================================
@@ -145,7 +164,24 @@ void CGame::Update()
 //======================================================
 void CGame::Draw()
 {
-	CScene::Draw();
+	LPDIRECT3DDEVICE9 pDevice;		//デバイスへのポインタ
+
+	CRenderer* pRenderer = CManager::GetRenderere();
+
+	//デバイスの取得
+	pDevice = pRenderer->GetDevice();
+
+	//頂点バッファをデータストリームに設定
+	pDevice->SetStreamSource(0, m_pVtxBuff, 0, sizeof(VERTEX_2D));
+
+	//頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_2D);
+
+	//テクスチャの設定
+	pDevice->SetTexture(0, m_pTexture);
+
+	//ポリゴンの描画
+	pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }
 
 //======================================================
@@ -153,36 +189,59 @@ void CGame::Draw()
 //======================================================
 void CGame::CreateObject(int type, const std::string& key, D3DXVECTOR3 position, float rotation)
 {
-	CBlock* pObj = nullptr;
+	CBlock* pObj_Block = nullptr;
+	CItem* pObj_Itenm = nullptr;
 
 	switch (type)
 	{
-	case 1:
-		pObj = CBlock::Create(position, CBlock::BLOCK::BLOCK_NORMAL);
+	case 1:		// 通常ブロック
+		pObj_Block = CBlock::Create(position, CBlock::BLOCK::BLOCK_NORMAL);
 		break;
-	case 4:
-		pObj = CBlockDoor::Create(position, CBlock::BLOCK::BLOCK_DOOR);
+
+	case 2:		// トゲ(未実装)
+		pObj_Block = CBlockNeedle::Create(position, CBlock::BLOCK::BLOCK_NEEDLE);
 		break;
-	case 5:
-		pObj = CBlockButton::Create(position, CBlock::BLOCK::BLOCK_BUTTON);
+
+	case 4:		// ドア
+		if (key == "R")
+			pObj_Block = CBlockRedDoor::Create(position, CBlockRedDoor::DOOR_RED);
+		else if (key == "B")
+			pObj_Block = CBlockBlueDoor::Create(position, CBlockBlueDoor::DOOR_BLUE);
+		else
+			pObj_Block = CBlockDoor::Create(position, CBlock::BLOCK::BLOCK_DOOR,CBlockDoor::DOOR_NORMAL);
 		break;
-	case 99:
-		pObj = CBlockGoal::Create(position, CBlock::BLOCK::BLOCK_GOAL);
+
+	case 5:		// ボタン
+		if (key == "R")
+			pObj_Block = CBlockRedButton::Create(position, CBlockRedButton::BUTTON_RED);
+		else if (key == "B")
+			pObj_Block = CBlockBlueButton::Create(position,CBlockBlueButton::BUTTON_BLUE);
+		else
+			pObj_Block = CBlockButton::Create(position, CBlock::BLOCK::BLOCK_BUTTON);
 		break;
+
+	case 11:	// アイテム
+		pObj_Itenm = CItem::Create(position, CItem::ITEM::ITEM_STAR);
+		break;
+
+	case 99:	// ゴール
+		pObj_Block = CBlockGoal::Create(position, CBlock::BLOCK::BLOCK_GOAL);
+		break;
+
 	default:
 		break;
 	}
 
-	if (pObj)
+	if (pObj_Block)
 	{
-		pObj->SetPairKey(key.c_str());
+		pObj_Block->SetPairKey(key.c_str());
 
-		pObj->SetRotation(rotation);
+		pObj_Block->SetRotation(rotation);
 
 		if (key != "none")
 		{
 			// ペアを登録
-			CObject::GetPair()[key].push_back(pObj);
+			CObject::GetPair()[key].push_back(pObj_Block);
 		}
 	}
 }

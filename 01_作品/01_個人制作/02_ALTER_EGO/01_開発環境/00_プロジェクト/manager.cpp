@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [manager.cpp]
+// ALTER_EGO [manager.cpp]
 // Auther : 大竹熙
 //
 //======================================================
@@ -19,10 +19,12 @@ CTexture* CManager::m_pTexture = nullptr;
 CModel* CManager::m_pModel = nullptr;
 CScene* CManager::m_pScene = nullptr;
 CSound* CManager::m_pSound = nullptr;
-//CParticleManager* CManager::m_pParticleManager = nullptr;
+CParticleManager* CManager::m_pParticleManager = nullptr;
 int CManager::m_nMode = 0;
+std::string CManager::m_nextStageFile = "";
+CScene::MODE CManager::m_nextSceneMode = CScene::MODE_TITLE;
 bool CManager::m_bPaused = false;
-//CFade* CManager::m_pFade = nullptr;
+CFade* CManager::m_pFade = nullptr;
 
 //======================================================
 // コンストラクタ
@@ -71,9 +73,9 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	m_pSound = new CSound();
 	m_pSound->Init(hWnd);
 
-	//// パーティクルマネージャー生成
-	//m_pParticleManager = new CParticleManager();
-	//m_pParticleManager->Init();
+	// パーティクルマネージャー生成
+	m_pParticleManager = new CParticleManager();
+	m_pParticleManager->Init();
 
 	// 生成
 	m_pScene = CScene::Create(CScene::MODE::MODE_TITLE);
@@ -136,21 +138,20 @@ void CManager::Uninit ()
 		delete m_pSound;
 		m_pSound = nullptr;
 	}
-	//if (m_pParticleManager != nullptr)
-	//{
-	//	m_pParticleManager->Uninit();
-	//	delete m_pParticleManager;
-	//	m_pParticleManager = nullptr;
-	//}
+	if (m_pParticleManager != nullptr)
+	{
+		m_pParticleManager->Uninit();
+		delete m_pParticleManager;
+		m_pParticleManager = nullptr;
+	}
+	if (m_pFade != nullptr)
+	{
+		m_pFade->Uninit();
+		delete m_pFade;
+		m_pFade = nullptr;
+	}
 
 	CObject::DeleateProcess();
-
-	//if (m_pFade != nullptr)
-	//{
-	//	m_pFade->Uninit();
-	//	delete m_pFade;
-	//	m_pFade = nullptr;
-	//}
 }
 
 //======================================================
@@ -158,6 +159,22 @@ void CManager::Uninit ()
 //======================================================
 void CManager::Update()
 {
+	//char debugMsg[256];
+
+	//if (m_pFade != nullptr)
+	//{
+	//	sprintf(debugMsg, "[CManager::Update] m_pFade のアドレス: %p\n", m_pFade);
+	//	OutputDebugStringA(debugMsg);
+
+	//	OutputDebugStringA("[CManager::Update] m_pFade->Update() を実行します\n");
+	//	m_pFade->Update();
+	//	OutputDebugStringA("[CManager::Update] m_pFade->Update() 完了\n");
+	//}
+	//else
+	//{
+	//	OutputDebugStringA("[CManager::Update] m_pFade は NULL です\n");
+	//}
+
 	m_nMode = (int)m_pScene->GetMode();
 
 	if (m_pRnderer != nullptr)
@@ -180,14 +197,9 @@ void CManager::Update()
 	{
 		m_pScene->Update();
 	}
-	//if (m_pParticleManager != nullptr)
-	//{
-	//	m_pParticleManager->Update();
-	//}
-
-	if (m_pKeyboard->GetTrigger(DIK_K) || m_pJoyPad->GetJoyPadTrigger(CInput::JOYKEY_X) == true)
+	if (m_pParticleManager != nullptr)
 	{
-		CManager::SetPaused(true); // ポーズを有効に
+		m_pParticleManager->Update();
 	}
 
 	bool& pPlayer = CPlayer::GetGoal();
@@ -220,126 +232,71 @@ void CManager::Draw()
 	{
 		m_pRnderer->Draw();
 	}
-	//if (m_pParticleManager != nullptr)
-	//{
-	//	m_pParticleManager->Draw();
-	//}
-}
-
-//======================================================
-// レンダラー取得
-//======================================================
-CRenderer* CManager::GetRenderere()
-{
-	return m_pRnderer;
-}
-
-//======================================================
-// キーボード取得
-//======================================================
-CInputKeyboard* CManager::GetKeyboard()
-{
-	return m_pKeyboard;
-}
-
-//======================================================
-// ゲームパッド取得
-//======================================================
-CInputJoyPad* CManager::GetJoyPad()
-{
-	return m_pJoyPad;
-}
-
-//======================================================
-// ライト取得
-//======================================================
-CLight* CManager::GetLight()
-{
-	return m_pLight;
-}
-
-//======================================================
-// テクスチャ取得
-//======================================================
-CTexture* CManager::GetTexture()
-{
-	return m_pTexture;
-}
-
-//======================================================
-// モデル取得
-//======================================================
-CModel* CManager::GetModel()
-{
-	return m_pModel;
+	if (m_pScene != nullptr)
+	{
+		m_pScene->Draw();
+	}
+	if (m_pParticleManager != nullptr)
+	{
+		m_pParticleManager->Draw();
+	}
 }
 
 //======================================================
 // シーン取得
 //======================================================
-CScene* CManager::GetScene()
+CFade* CManager::GetFade()
 {
-	return m_pScene;
+	return m_pFade;
 }
 
-//======================================================
-// シーン取得
-//======================================================
-CSound* CManager::GetSound()
+void CManager::SetFadeInstance(CFade* fade)
 {
-	return m_pSound;
+	m_pFade = fade;
 }
-
-//======================================================
-// モード取得
-//======================================================
-int& CManager::GetMode()
-{
-	return m_nMode;
-}
-
-////======================================================
-//// パーティクルマネージャー取得
-////======================================================
-//CParticleManager* CManager::GetParticleManager()
-//{
-//	return m_pParticleManager;
-//}
-
-////======================================================
-//// シーン取得
-////======================================================
-//CFade* CManager::GetFade()
-//{
-//	return /*m_pFade*/nullptr;
-//}
 
 //======================================================
 // モード設定
 //======================================================
 void CManager::SetMode(CScene::MODE mode)
 {
-	//if (m_pFade == nullptr)
-	//{
-	//	// 生成
-	//	//m_pFade = CFade::Create(mode);
-	//}
+	if (m_pFade == nullptr)
+	{
+		OutputDebugStringA("[SetMode] m_pFade が NULL\n");
+	}
 
+	char debugMsg[256];
+
+	sprintf(debugMsg, "[SetMode] 実行前の m_pFade: %p\n", m_pFade);
+	OutputDebugStringA(debugMsg);
+
+	OutputDebugStringA("[SetMode] オブジェクトを解放します\n");
 	CObject::ReleaseAll();
 
 	//終了処理
 	if (m_pScene != nullptr)
 	{
+		OutputDebugStringA("[SetMode] 既存のシーンを削除します\n");
 		m_pScene->Uninit();
 		delete m_pScene;
 		m_pScene = nullptr;
 	}
 	
-	//m_pFade->SetFade(CFade::FADE::FADE_IN, mode);
-
 	// 生成
+	OutputDebugStringA("[SetMode] 新しいシーンを作成します\n");
 	m_pScene = CScene::Create(mode);
 
-	// 生成
-	//CFade::Create(mode)->SetFade(CFade::FADE::FADE_IN, mode);
+	OutputDebugStringA("[SetMode] CFade を作成します\n");
+	//m_pFade = CFade::Create(mode);
+
+	sprintf(debugMsg, "[SetMode] 作成後の m_pFade: %p\n", m_pFade);
+	OutputDebugStringA(debugMsg);
+
+	SetFadeInstance(m_pFade);
+
+	if (m_pFade != nullptr)
+	{
+		OutputDebugStringA("[SetMode] フェードアウトを開始します\n");
+		m_pFade->SetFade(CFade::FADE_OUT, mode);
+	}
 }

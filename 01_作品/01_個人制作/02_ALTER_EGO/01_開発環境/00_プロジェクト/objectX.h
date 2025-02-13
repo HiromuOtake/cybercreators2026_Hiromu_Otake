@@ -1,6 +1,6 @@
 //==============================================
 //
-//3Dスクロールアクション[objectX.h]
+//ALTER_EGO[objectX.h]
 //Author: hiromu otake
 //
 //==============================================
@@ -10,7 +10,6 @@
 class CObjectX : public CObject
 {
 protected:
-	//float m_fRotationY;
 	float m_fRotation;
 public:
 	CObjectX(int nPriority = 3);

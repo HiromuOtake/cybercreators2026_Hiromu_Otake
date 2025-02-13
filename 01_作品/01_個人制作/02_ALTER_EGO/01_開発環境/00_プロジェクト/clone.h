@@ -1,6 +1,6 @@
 //==============================================
 //
-//3Dスクロールアクション[player.h]
+//ALTER_EGO[player.h]
 //Author: hiromu otake
 //
 //==============================================
@@ -9,6 +9,7 @@
 #include "objectX.h"
 #include "modelparts.h"
 #include "character.h"
+#include "collision.h"
 
 class CClone : public CCharacter
 {
@@ -26,19 +27,20 @@ public:
 	void Uninit()override;
 	void Update()override;
 	void Draw()override;
-	bool CollisionUPDOWN(bool& bIsLanding, CObject* pObj);	// 当たり判定上下
-	void CollisionLEFTRIGHT(CObject* pObj);					// 当たり判定左右
-	static bool& GetGoal();									// ゴール情報の取得
-	static CClone* Create(D3DXVECTOR3 pos);				// プレイヤーの生成
-	static const int m_PLAYER_LIFE = 1;						// プレイヤーの体力
-	static const int m_DEATH_COUNT = 30;					// プレイヤーが復活するまでの時間
-	static const int m_RESET_PLAYER_POS_X = 200;			// プレイヤーを復活させる場所(X座標)
-	static const int m_RESET_PLAYER_POS_Y = -1200;			// プレイヤーを復活させる場所(Y座標)
-	static constexpr float m_PLAYER_SHOT_POS = 20.0f;		// プレイヤーが弾を出す位置の補正
-	static constexpr float m_PLAYER_SHOT_MOVE = 15.0f;		// プレイヤーの弾の速度
-	static constexpr float m_PLAYER_ROTATION_SPEED = 0.15f;	// プレイヤーの回転の速さ
-	static constexpr float m_PLAYER_JUMP = 22.5f;			// プレイヤーのジャンプ力
-	static constexpr float m_PLAYER_SPEED = 1.0f;			// プレイヤーのスピード
+	bool CollisionUPDOWN(bool& bIsLanding, CObject* pObj);					// 当たり判定上下
+	void CollisionLEFTRIGHT(CObject* pObj);									// 当たり判定左右
+	static bool& GetGoal() { return m_bUse; }								// ゴール情報の取得
+	void SetStopClone(bool bStopClone) { m_bStopClone = bStopClone; }		// クローンの動きON/OFFスイッチ
+	static CClone* Create(D3DXVECTOR3 pos);									// クローンの生成
+	static const int m_CLONE_LIFE = 1;										// クローンの体力
+	static const int m_DEATH_COUNT = 30;									// クローンが復活するまでの時間
+	static const int m_RESET_CLONE_POS_X = 200;								// クローンを復活させる場所(X座標)
+	static const int m_RESET_CLONE_POS_Y = -1200;							// クローンを復活させる場所(Y座標)
+	static constexpr float m_CLONE_SHOT_POS = 20.0f;						// クローンが弾を出す位置の補正
+	static constexpr float m_CLONE_SHOT_MOVE = 15.0f;						// クローンの弾の速度
+	static constexpr float m_CLONE_ROTATION_SPEED = 0.15f;					// クローンの回転の速さ
+	static constexpr float m_CLONE_JUMP = 22.5f;							// クローンのジャンプ力
+	static constexpr float m_CLONE_SPEED = 1.0f;							// クローンのスピード
 	static constexpr float m_LEFTRIGHT = 0.5f;
 	void SetDeath()override;
 private:
@@ -48,14 +50,12 @@ private:
 	D3DXVECTOR3 m_min;
 	D3DXVECTOR3 m_size;
 	int m_nTextureIdx;
-	bool m_bIsLanding;
+	bool m_bLanding;
 	bool m_bJumping;
-	bool m_bIsRight;
-	static bool m_bGravity;
-	static bool m_bGravityRotation;
+	bool m_bStopClone;
 	static bool m_bUse;
 	static bool m_bhalfwaypoint;
-	int m_JumpCnt;
+	int m_nJumpCnt;
 	int m_nModelIdx;
 	int m_nLife;
 	int m_nType;
@@ -63,6 +63,7 @@ private:
 	CInputKeyboard* m_Keyboard;
 	CInputJoyPad* m_JoyPad;
 	CModelParts* m_pModelParts[15];
+	CCollision* m_pCollision;
 };
 
 #pragma once

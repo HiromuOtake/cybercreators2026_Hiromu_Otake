@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[camera.h]
+// ALTER_EGO[camera.h]
 // Author: hiromu otake
 //
 //==============================================
@@ -23,8 +23,16 @@ public:
 	void SetShake(int nShakeTime, float fShakePower);	// 揺れの設定
 	static D3DXVECTOR3* GetRot();
 	static CCamera* Create();
-	static constexpr float m_CORRECTIOM_WIDTH = 1.405f;
-	static constexpr float m_CORRECTIOM_HEIGHT = 1.39f;
+	static constexpr float m_CAMERAPOS_X = 950.0f;
+	static constexpr float m_CAMERAPOS_Y = 550.0f;
+	static constexpr float m_CAMERAPOS_Z = 100.0f;
+	static constexpr float m_CORRECTIOM_WIDTH = 1.564f;
+	static constexpr float m_CORRECTIOM_HEIGHT = 1.67f;
+	//static constexpr float m_CAMERAPOS_X = 850.0f;
+	//static constexpr float m_CAMERAPOS_Y = 450.0f;
+	//static constexpr float m_CAMERAPOS_Z = 100.0f;
+	//static constexpr float m_CORRECTIOM_WIDTH = 1.405f;
+	//static constexpr float m_CORRECTIOM_HEIGHT = 1.39f;
 private:
 	D3DXVECTOR3 m_posV;			// 視点
 	D3DXVECTOR3 m_posR;			// 注視点

@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[game.h]
+// ALTER_EGO[game.h]
 // Author: hiromu otake
 //
 //==============================================
@@ -16,15 +16,6 @@
 class CGame : public CScene
 {
 public:
-	// 画面の種類
-	typedef enum
-	{
-		MODE_TITLE = 0,
-		MODE_TUTORIAL,
-		MODE_GAME,
-		MODE_RESULT,
-		MODE_MAX,
-	}MODE;
 	CGame();							// コンストラクタ
 	~CGame()override;					// デストラクタ
 	HRESULT Init()override;				// 初期設定
@@ -37,11 +28,13 @@ public:
 	static const int m_BLOCK_BESIDE = 30;
 	static const int m_BLOCK_VERTICAL = 15;
 private:
-	static CPlayer* m_pPlayer;
-	//static CItem* m_pItem;
-	static CCamera* m_pCamera;
+	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;	// 頂点バッファ
+	LPDIRECT3DTEXTURE9 m_pTexture;		//テクスチャへのポインタ
+	CInputKeyboard* m_Keyboard;
+	CInputJoyPad* m_JoyPad;
 	int m_nType[m_BLOCK_BESIDE][m_BLOCK_VERTICAL];
-	//std::unordered_map<std::string, CBlock*> m_pairList;
+	static CPlayer* m_pPlayer;
+	static CCamera* m_pCamera;
 };
 
 #pragma once

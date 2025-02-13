@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [object3D.h]
+// ALTER_EGO [object3D.h]
 // Auther : 大竹熙
 //
 //======================================================
@@ -20,8 +20,8 @@ public:
 	void Update()override;
 	void Draw()override;
 	void BindTexture(LPDIRECT3DTEXTURE9 pTex);
-	void SetPos(D3DXVECTOR3 pos);
-	void SetRot(D3DXVECTOR3 rot);
+	void SetVertexBuffer(LPDIRECT3DVERTEXBUFFER9 pVtxBuff);
+	void SetPos(float x, float y, float z);
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;		// 頂点バッファ
 	LPDIRECT3DTEXTURE9 m_pTexture;			//テクスチャへのポインタ

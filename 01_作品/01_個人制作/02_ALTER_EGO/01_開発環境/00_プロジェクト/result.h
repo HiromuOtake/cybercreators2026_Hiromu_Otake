@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[game.h]
+// ALTER_EGO[result.h]
 // Author: hiromu otake
 //
 //==============================================
@@ -12,15 +12,6 @@
 class CResult : public CScene
 {
 public:
-	// 画面の種類
-	typedef enum
-	{
-		MODE_TITLE = 0,
-		MODE_TUTORIAL,
-		MODE_GAME,
-		MODE_RESULT,
-		MODE_MAX,
-	}MODE;
 	CResult();							// コンストラクタ
 	~CResult()override;					// デストラクタ
 	HRESULT Init()override;				// 初期設定

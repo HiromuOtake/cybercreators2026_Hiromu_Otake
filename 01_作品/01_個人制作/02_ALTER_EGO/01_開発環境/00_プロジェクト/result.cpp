@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[game.cpp]
+// ALTER_EGO[result.cpp]
 // Author: hiromu otake
 //
 //==============================================
@@ -35,7 +35,7 @@ HRESULT CResult::Init()
 
 	CSound* pSound = CManager::GetSound();
 
-	pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_BGM001);
+	pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_BGM000);
 
 	return S_OK;
 }

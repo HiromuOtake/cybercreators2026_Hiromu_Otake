@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[camera.cpp]
+// ALTER_EGO[camera.cpp]
 // Author: hiromu otake
 //
 //==============================================
@@ -34,8 +34,8 @@ CCamera::~CCamera()
 HRESULT CCamera::Init()
 {
 	m_Keyboard = CManager::GetKeyboard();
-	m_posV = D3DXVECTOR3(850.0f, -450.0f, -100.0f);
-	m_posR = D3DXVECTOR3(850.0f, -450.0f, 0.0f);
+	m_posV = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, -m_CAMERAPOS_Z);
+	m_posR = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, 0.0f);
 	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	return S_OK;
@@ -60,8 +60,8 @@ void CCamera::Update()
 
 		if (m_bCameraChanger == false)
 		{
-			m_posV = D3DXVECTOR3(850.0f, -450.0f, -100.0f);
-			m_posR = D3DXVECTOR3(850.0f, -450.0f, 0.0f);
+			m_posV = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, -m_CAMERAPOS_Z);
+			m_posR = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, 0.0f);
 			m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 		}
@@ -86,6 +86,40 @@ void CCamera::Update()
 	{
 
 	}
+
+	////カメラ移動
+	//if (m_Keyboard->GetPress(DIK_W) == true)
+	//{
+	//	m_posR.z += cosf(m_rot.y) * 2;
+	//	m_posR.x += sinf(m_rot.y) * 2;
+	//	
+	//	m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
+	//	m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
+	//}
+	//if (m_Keyboard->GetPress(DIK_S) == true)
+	//{
+	//	m_posR.z += cosf(m_rot.y - D3DX_PI) * 2;
+	//	m_posR.x += sinf(m_rot.y - D3DX_PI) * 2;
+
+	//	m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
+	//	m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
+	//}
+	//if (m_Keyboard->GetPress(DIK_A) == true)
+	//{
+	//	m_posR.z -= cosf(m_rot.y + 1.57f) * 2;
+	//	m_posR.x -= sinf(m_rot.y + 1.57f) * 2;
+
+	//	m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
+	//	m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
+	//}
+	//if (m_Keyboard->GetPress(DIK_D) == true)
+	//{
+	//	m_posR.z -= cosf(m_rot.y - 1.57f) * 2;
+	//	m_posR.x -= sinf(m_rot.y - 1.57f) * 2;
+	//	
+	//	m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
+	//	m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
+	//}
 }
 
 //===============================

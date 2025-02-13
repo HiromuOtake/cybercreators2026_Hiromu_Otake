@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [object.h]
+// ALTER_EGO [object.h]
 // Auther : 大竹熙
 //
 //======================================================
@@ -20,6 +20,7 @@ public:
 	{
 		TYPE_NONE = 0,
 		TYPE_PLAYER,
+		TYPE_CLONE,
 		TYPE_FIELD,
 		TYPE_BULLET,
 		TYPE_BLOCK,
@@ -55,7 +56,7 @@ public:
 	std::vector<CObject*>& GetPairObjects(const std::string& key);
 	std::vector<CObject*> GetAllObjects();
 	CObject* FindFirstOfType(TYPE type);
-
+	
 protected:
 	void Release();												// 自分自身の解放
 private:

@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[scene.h]
+// ALTER_EGO[scene.h]
 // Author: hiromu otake
 //
 //==============================================
@@ -15,6 +15,9 @@ public:
 	{
 		MODE_NONE = 0,
 		MODE_TITLE,
+		MODE_STAGESELECT,
+		MODE_TUTORIAL1,
+		MODE_TUTORIAL2,
 		MODE_GAME,
 		MODE_RESULT,
 		MODE_MAX,

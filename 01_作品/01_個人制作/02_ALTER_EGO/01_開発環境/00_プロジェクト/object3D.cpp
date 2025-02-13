@@ -1,6 +1,6 @@
 //======================================================
 //
-// 3Dスクロールアクション [object2D.cpp]
+// ALTER_EGO [object3D.cpp]
 // Auther : 大竹熙
 //
 //======================================================
@@ -36,11 +36,6 @@ HRESULT CObject3D::Init()
 	//デバイスの取得
 	pDevice = pRenderer->GetDevice();
 
-	//テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,
-		"data\\Texture\\sss.jpg",
-		&m_pTexture);
-
 	//頂点バッファの生成
 	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
 		D3DUSAGE_WRITEONLY,
@@ -55,10 +50,10 @@ HRESULT CObject3D::Init()
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-1000.0, 0.0f, 1000.0);
-	pVtx[1].pos = D3DXVECTOR3(1000.0, 0.0f, 1000.0);
-	pVtx[2].pos = D3DXVECTOR3(-1000.0, 0.0f, -1000.0);
-	pVtx[3].pos = D3DXVECTOR3(1000.0, 0.0f, -1000.0);
+	pVtx[0].pos = D3DXVECTOR3(-1000.0f, 0.0f, 1000.0f);
+	pVtx[1].pos = D3DXVECTOR3(1000.0f, 0.0f, 1000.0f);
+	pVtx[2].pos = D3DXVECTOR3(-1000.0f, 0.0f, -1000.0f);
+	pVtx[3].pos = D3DXVECTOR3(1000.0f, 0.0f, -1000.0f);
 
 	//法線ベクトルの設定
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
@@ -110,13 +105,8 @@ void CObject3D::Update()
 //======================================================
 void CObject3D::Draw()
 {
-	LPDIRECT3DDEVICE9 pDevice;		//デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();;		//デバイスへのポインタ
 	D3DXMATRIX mtxRot, mtxTrans;	//計算用マトリックス
-
-	CRenderer* pRenderer = CManager::GetRenderere();
-
-	//デバイスの取得
-	pDevice = pRenderer->GetDevice();
 
 	//ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
@@ -154,17 +144,21 @@ void CObject3D::BindTexture(LPDIRECT3DTEXTURE9 pTex)
 }
 
 //======================================================
-// 位置の設定
+// 頂点バッファの設定
 //======================================================
-void CObject3D::SetPos(D3DXVECTOR3 pos)
+void CObject3D::SetVertexBuffer(LPDIRECT3DVERTEXBUFFER9 pVtxBuff)
 {
-	m_pos = pos;
+	if (m_pVtxBuff)
+	{
+		m_pVtxBuff->Release();
+	}
+	m_pVtxBuff = pVtxBuff;
 }
 
 //======================================================
 // 位置の設定
 //======================================================
-void CObject3D::SetRot(D3DXVECTOR3 rot)
+void CObject3D::SetPos(float x, float y, float z)
 {
-	m_rot = rot;
+	m_pos = D3DXVECTOR3(x, y, z);
 }

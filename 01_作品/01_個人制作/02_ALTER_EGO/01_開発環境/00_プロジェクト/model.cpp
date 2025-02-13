@@ -1,6 +1,6 @@
 //==============================================
 //
-// 3Dスクロールアクション[Model.h]
+// ALTER_EGO[model.h]
 // Author: hiromu otake
 //
 //==============================================
@@ -15,15 +15,15 @@ CModel::CModel() : m_nNumAll(0), m_pModelList{}, m_pModelName{}
 {
 	for (int nCnt = 0; nCnt < m_MAXMODEL; nCnt++)
 	{
-		m_pModelList[nCnt].m_pMesh = {};
-		m_pModelList[nCnt].m_pBuffMat = {};
-		m_pModelList[nCnt].m_dwNumMat = {};
-		m_pModelList[nCnt] = {};
+		m_pModelList[nCnt].m_pMesh = nullptr;
+		m_pModelList[nCnt].m_pBuffMat = nullptr;
+		m_pModelList[nCnt].m_dwNumMat = 0;
+		//m_pModelList[nCnt] = {};
 		for (int nCntTex = 0; nCntTex < m_MAXSENTENCE; nCntTex++)
 		{
 			m_pModelName[nCnt][nCntTex] = {};
-			m_pModelList[nCnt].m_pTexture[nCntTex] = {};
 		}
+		memset(m_pModelName[nCnt], 0, sizeof(m_pModelName[nCnt]));
 	}
 }
 
@@ -64,7 +64,6 @@ int CModel::Regist(const char* pModelName)
 {
 	int nIdx = 0;
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();;		//デバイスへのポインタ
-	//D3DXMATERIAL* pMat;														//マテリアルデータへのポインタ
 
 	for (int nCnt = 0; nCnt < m_MAXMODEL; nCnt++)
 	{
@@ -81,26 +80,13 @@ int CModel::Regist(const char* pModelName)
 				&m_pModelList[nCnt].m_dwNumMat,
 				&m_pModelList[nCnt].m_pMesh);
 
-			//pMat = (D3DXMATERIAL*)m_pModelList[nCnt].m_pBuffMat->GetBufferPointer();
-
-			//for (int nCntTex = 0; nCntTex < (int)m_pModelList[nCnt].m_dwNumMat; nCntTex++)
-			//{
-			//	if (pMat[nCntTex].pTextureFilename != nullptr)
-			//	{
-			//		//テクスチャの読み込み
-			//		D3DXCreateTextureFromFile(pDevice,
-			//			pMat[nCntTex].pTextureFilename,
-			//			&m_pModelList[nCnt].m_pTexture[nCntTex]);
-			//	}
-			//}
-
 			strcpy(&m_pModelName[nCnt][0], pModelName);
 
 			nIdx = nCnt;	// ID設定
 			break;
 		}
 		else if (strcmp(&m_pModelName[nCnt][0], pModelName) == 0)
-		{// 既に生成されているテクスチャと一致した
+		{// 既に生成されているモデルと一致した
 			nIdx = nCnt;	// ID設定
 			break;
 		}
@@ -131,15 +117,6 @@ LPD3DXMESH CModel::GetMesh(int nIdx)
 	if (m_pModelList[nIdx].m_pMesh != nullptr)
 	{
 		return m_pModelList[nIdx].m_pMesh;
-	}
-	return nullptr;
-}
-
-LPDIRECT3DTEXTURE9* CModel::GetTexture(int nIdx)
-{
-	if (m_pModelList[nIdx].m_pTexture != nullptr)
-	{
-		return &m_pModelList[nIdx].m_pTexture[0];
 	}
 	return nullptr;
 }
