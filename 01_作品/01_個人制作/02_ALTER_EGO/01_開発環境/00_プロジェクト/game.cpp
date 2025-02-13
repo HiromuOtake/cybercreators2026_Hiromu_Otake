@@ -17,7 +17,6 @@
 #include "sound.h"
 #include "modelparts.h"
 #include "character.h"
-#include "pause.h"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -31,7 +30,7 @@ CCamera* CGame::m_pCamera = nullptr;
 //======================================================
 // コンストラクタ
 //======================================================
-CGame::CGame() : m_nType{}
+CGame::CGame() : m_nType{}, m_bPauseSwitch(false)
 {
 	for (int nCntBeside = 0; nCntBeside < m_BLOCK_BESIDE; nCntBeside++)
 	{
@@ -128,7 +127,6 @@ void CGame::Uninit()
 	delete m_pCamera;
 	m_pCamera = nullptr;
 
-	m_pPlayer->SetUseDeath(true);
 	m_pPlayer->SetDeath();
 	m_pPlayer = nullptr;
 
@@ -150,12 +148,19 @@ void CGame::Update()
 
 	if (m_Keyboard->GetTrigger(DIK_P) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_START) == true)
 	{
-		CManager::SetPaused(true);
-		CPause::Create();
-	}
-	if (m_Keyboard->GetTrigger(DIK_R) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_X) == true)
-	{
-		CManager::SetMode(CScene::MODE::MODE_GAME);
+		m_bPauseSwitch = m_bPauseSwitch ? false : true;
+
+		if (m_bPauseSwitch == true)
+		{
+			CManager::SetPaused(true);
+			m_pPause = CPause::Create();
+		}
+		else if (m_bPauseSwitch == false)
+		{
+			CManager::SetPaused(false);
+			m_pPause->Uninit();
+			m_pPause = nullptr;
+		}
 	}
 }
 

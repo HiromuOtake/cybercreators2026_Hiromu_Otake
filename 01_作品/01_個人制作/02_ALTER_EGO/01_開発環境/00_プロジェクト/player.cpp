@@ -200,7 +200,7 @@ void CPlayer::HandleCloneSelection()
 	}
 
 	// Enterキーでクローン生成
-	if (m_Keyboard->GetTrigger(DIK_RETURN) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_B) == true)
+	if (m_Keyboard->GetTrigger(DIK_RETURN) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_A) == true)
 	{
 		pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_DELETECIRCLE);
 

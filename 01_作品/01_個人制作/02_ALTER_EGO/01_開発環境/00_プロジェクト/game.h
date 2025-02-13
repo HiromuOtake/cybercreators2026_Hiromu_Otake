@@ -10,6 +10,8 @@
 #include "player.h"
 #include "camera.h"
 #include "item.h"
+#include "pause.h"
+
 //#include <unordered_map>
 //#include "block.h"
 
@@ -33,8 +35,10 @@ private:
 	CInputKeyboard* m_Keyboard;
 	CInputJoyPad* m_JoyPad;
 	int m_nType[m_BLOCK_BESIDE][m_BLOCK_VERTICAL];
+	bool m_bPauseSwitch;
 	static CPlayer* m_pPlayer;
 	static CCamera* m_pCamera;
+	CPause* m_pPause;
 };
 
 #pragma once

@@ -148,7 +148,7 @@ void CObject::Release()
 //======================================================
 void CObject::SetDeath()
 {
-	if (m_bUseDeath == true)
+	if (m_Death == false)
 	{
 		m_Death = true;
 	}

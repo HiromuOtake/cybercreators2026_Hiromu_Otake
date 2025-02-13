@@ -211,7 +211,7 @@ CBg* CBg::Create(CScene::MODE mode)
 		pBg->SetType(TYPE_BG);
 		pBg->BindTexture(CManager::GetTexture()->GetAddress(nId));
 		pBg->Init();
-		pBg->SetUseDeath(true);
+		//pBg->SetUseDeath(true);
 	}
 	return  pBg;
 }
