@@ -8,6 +8,8 @@
 #include "manager.h"
 #include "object2D.h"
 
+class CGame;
+
 class CPause : public CObject2D
 {
 public:
@@ -17,7 +19,7 @@ public:
 	void Uninit()override;
 	void Update()override;
 	void Draw()override;
-	void SelectPause();
+	void SelectPause(CGame* game);
 	static CPause* Create();				// É|Å[ÉYâÊñ ê∂ê¨
 	void SetDeath()override;
 private:

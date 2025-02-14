@@ -19,8 +19,7 @@ CPlayer::CPlayer(int nPriority) : CCharacter(nPriority), m_max{ 0.0f,0.0f,0.0f }
 , m_bIsLanding(false), m_bJumping(false), m_IsRight(false), m_bCloneActive(false), m_bUseItem(false), m_pCloneCircle(nullptr), m_pClone(nullptr),m_pItem(nullptr), m_Keyboard(nullptr), m_JoyPad(nullptr), m_pModelParts{}
 , m_nModelIdx(0), m_nTextureIdx(0), m_nLife(0), m_nType(PLAYER_NONE), m_nDeathTimer(0), m_nJumpCnt(0), m_nRandomAction(0), m_nTitleJump(0)
 {
-	m_pCloneCircle = new CCloneCircle();
-	m_pCloneCircle->Init();
+
 }
 
 //==============================================
@@ -113,55 +112,63 @@ void CPlayer::Update()
 {
 	CSound* pSound = CManager::GetSound();
 
-	if (CManager::GetMode() == CScene::MODE_GAME)
-	{
-		// Kキーでクローン選択を開始
-		if (m_Keyboard->GetTrigger(DIK_K) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_X))
-		{
-			m_bCloneActive = !m_bCloneActive;	// 表示切り替え
-			if (m_bCloneActive)
-			{
-				pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_SPAWNSIRCLE);
-				m_pCloneCircle->Activate();		// 描画を再有効化
-				m_pCloneCircle->SetPlayerPos(GetPos());
-				
-				if (m_pClone != nullptr)
-				{
-					m_pClone->SetStopClone(true);
-					m_pClone->SetDeath();
-					m_pClone = nullptr;
-				}
-			}
-			else
-			{
-				pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_DELETECIRCLE);
-				m_pCloneCircle->SetDeath();		// リソースの解放
-				CManager::SetPaused(false);		// ポーズ解除
-
-				if (m_pClone != nullptr)
-				{
-					m_pClone->SetStopClone(false);
-				}
-			}
-		}
-	}
-
 	if (CManager::IsPaused())
 	{
 		return;
 	}
 	else
 	{
-		// クローン選択中の操作
-		if (m_bCloneActive)
+		if (m_pCloneCircle != nullptr)
 		{
+			// クローン選択中の操作
 			HandleCloneSelection();				// クローン選択の処理
-			m_pCloneCircle->Update();			// クローン位置更新
+			if (CManager::IsPaused())
+			{
+				if (m_pCloneCircle != nullptr)
+				{
+					m_pCloneCircle->Update();			// クローン位置更新
+				}
+			}
 		}
 		else
 		{
 			// 通常時のプレイヤー処理
 			PlayerMovement();
+		}
+	}
+	if (CManager::GetMode() == CScene::MODE_GAME)
+	{
+		if (!CManager::IsPaused())
+		{
+			// Kキーでクローン選択を開始
+			if (m_Keyboard->GetTrigger(DIK_K) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_X))
+			{
+				m_bCloneActive = !m_bCloneActive;	// 表示切り替え
+				if (m_bCloneActive)
+				{
+					pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_SPAWNSIRCLE);
+					m_pCloneCircle = m_pCloneCircle->Create(GetPos()); 		// 描画を再有効化
+					m_pCloneCircle->Activate();
+					if (m_pClone != nullptr)
+					{
+						m_pClone->SetStopClone(true);
+						m_pClone->SetDeath();
+						m_pClone = nullptr;
+					}
+				}
+				else if (!m_bCloneActive)
+				{
+					pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_DELETECIRCLE);
+					m_pCloneCircle->SetDeath();		// リソースの解放
+					m_pCloneCircle = nullptr;
+					CManager::SetPaused(false);		// ポーズ解除
+
+					if (m_pClone != nullptr)
+					{
+						m_pClone->SetStopClone(false);
+					}
+				}
+			}
 		}
 	}
 }
@@ -200,13 +207,14 @@ void CPlayer::HandleCloneSelection()
 	}
 
 	// Enterキーでクローン生成
-	if (m_Keyboard->GetTrigger(DIK_RETURN) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_A) == true)
+	if ((m_Keyboard->GetTrigger(DIK_RETURN) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_A) == true))
 	{
 		pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_DELETECIRCLE);
 
 		GenerateClone();
-		m_bCloneActive = false;  // クローン選択を終了
+		m_bCloneActive = false;
 		m_pCloneCircle->SetDeath();		// リソースの解放
+		m_pCloneCircle = nullptr;
 
 		if (m_pClone != nullptr)
 		{
@@ -412,13 +420,10 @@ void CPlayer::TitlePlayerMovement()
 //==============================================
 void CPlayer::Draw()
 {
-	if (CManager::IsPaused())
+	// クローン選択中に描画
+	if (m_pCloneCircle != nullptr)
 	{
-		// クローン選択中に描画
-		if (m_bCloneActive) 
-		{
-			m_pCloneCircle->Draw();
-		}
+		m_pCloneCircle->Draw();
 	}
 
 	if (m_nType == PLAYER_DEATH)

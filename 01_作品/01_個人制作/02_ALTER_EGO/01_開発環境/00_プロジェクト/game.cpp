@@ -30,7 +30,8 @@ CCamera* CGame::m_pCamera = nullptr;
 //======================================================
 // コンストラクタ
 //======================================================
-CGame::CGame() : m_nType{}, m_bPauseSwitch(false)
+CGame::CGame() : m_nType{}, m_bPauseSwitch(false), m_bQuit(false
+)
 {
 	for (int nCntBeside = 0; nCntBeside < m_BLOCK_BESIDE; nCntBeside++)
 	{
@@ -54,9 +55,6 @@ CGame::~CGame()
 //======================================================
 HRESULT CGame::Init()
 {
-	m_Keyboard = CManager::GetKeyboard();
-	m_JoyPad = CManager::GetJoyPad();
-
 	CScene::Init();
 
 	CBg::Create(CScene::MODE::MODE_GAME);
@@ -146,7 +144,10 @@ void CGame::Update()
 
 	CScene::Update();
 
-	if (m_Keyboard->GetTrigger(DIK_P) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_START) == true)
+	CInputKeyboard* Keyboard = CManager::GetKeyboard();
+	CInputJoyPad* JoyPad = CManager::GetJoyPad();
+
+	if (Keyboard->GetTrigger(DIK_P) || JoyPad->GetJoyPadTrigger(CInput::JOYKEY_START) == true)
 	{
 		m_bPauseSwitch = m_bPauseSwitch ? false : true;
 
@@ -158,6 +159,23 @@ void CGame::Update()
 		else if (m_bPauseSwitch == false)
 		{
 			CManager::SetPaused(false);
+		}
+	}
+
+	if (m_pPause != nullptr && CManager::IsPaused())
+	{
+		m_pPause->SelectPause(this);
+
+		if (m_bQuit == true)
+		{
+			CManager::SetMode(CScene::MODE::MODE_STAGESELECT);
+			return;
+		}
+	}
+	if (m_bPauseSwitch == false)
+	{
+		if (m_pPause != nullptr)
+		{
 			m_pPause->Uninit();
 			m_pPause = nullptr;
 		}

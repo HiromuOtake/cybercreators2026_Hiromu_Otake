@@ -99,6 +99,7 @@ void CCloneCircle::Update()
 void CCloneCircle::Draw()
 {
     if (m_bUseDeath)
+
     {
         return; // –³Œø‰»‚³‚ê‚Ä‚¢‚ê‚Î•`‰æ‚µ‚È‚¢
     }
@@ -154,7 +155,6 @@ CCloneCircle* CCloneCircle::Create(D3DXVECTOR3 pos)
     {
         pCircle->Init();
         pCircle->SetPlayerPos(pos);
-        pCircle->SetUseDeath(true);
     }
     return pCircle;
 }

@@ -6,6 +6,7 @@
 //==============================================
 
 #include "pause.h"
+#include "game.h"
 #include <sstream>
 #include <iomanip>
 
@@ -94,7 +95,6 @@ void CPause::Uninit()
 //======================================================
 void CPause::Update()
 {
-    SelectPause();
 
     // アルファ値を更新
     for (int i = 0; i < 3; i++)
@@ -119,7 +119,7 @@ void CPause::Draw()
 //=================================
 // 入力処理
 //=================================
-void CPause::SelectPause()
+void CPause::SelectPause(CGame* game)
 {
     // 上下キー入力
     if (m_Keyboard->GetTrigger(DIK_W) || m_Keyboard->GetTrigger(DIK_UP) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_UP) == true)
@@ -136,7 +136,8 @@ void CPause::SelectPause()
     {
         if (m_nSelectPause == 0)
         {
-            Uninit();
+            game->SetPauseSwitch(false);
+            //SetDeath();
         }
         else if (m_nSelectPause == 1)
         {
@@ -144,7 +145,8 @@ void CPause::SelectPause()
         }
         else if (m_nSelectPause == 2)
         {
-            CManager::SetMode(CScene::MODE::MODE_STAGESELECT);
+            game->SetQuit(true);
+            //CManager::SetMode(CScene::MODE::MODE_STAGESELECT);
         }
         CManager::SetPaused(false);
     }

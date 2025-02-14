@@ -17,13 +17,13 @@
 class CPlayer : public CCharacter
 {
 public:
-	typedef enum
+	enum TYPE
 	{
 		PLAYER_NONE = 0,
 		PLAYER_NORMAL,
 		PLAYER_DEATH,
 		PLAYER_MAX,
-	}TYPE;
+	};
 	CPlayer(int nPriority = 3);
 	~CPlayer()override;
 	HRESULT Init()override;

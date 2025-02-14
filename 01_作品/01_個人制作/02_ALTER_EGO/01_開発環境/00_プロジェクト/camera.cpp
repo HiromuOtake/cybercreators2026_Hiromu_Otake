@@ -54,18 +54,18 @@ void CCamera::Uninit()
 //===============================
 void CCamera::Update()
 {
-	if (m_Keyboard->GetTrigger(DIK_F5) == true)
-	{
-		m_bCameraChanger = m_bCameraChanger ? false : true;
+	//if (m_Keyboard->GetTrigger(DIK_F5) == true)
+	//{
+	//	m_bCameraChanger = m_bCameraChanger ? false : true;
 
-		if (m_bCameraChanger == false)
-		{
-			m_posV = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, -m_CAMERAPOS_Z);
-			m_posR = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, 0.0f);
-			m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		}
-	}
+	//	if (m_bCameraChanger == false)
+	//	{
+	//		m_posV = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, -m_CAMERAPOS_Z);
+	//		m_posR = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, 0.0f);
+	//		m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	//		m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	//	}
+	//}
 
 	if (m_bCameraChanger == true)
 	{

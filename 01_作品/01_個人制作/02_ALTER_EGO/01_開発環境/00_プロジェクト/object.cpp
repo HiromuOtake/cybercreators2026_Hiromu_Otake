@@ -83,7 +83,7 @@ void CObject::UpdateAll()
 			CObject* pNext = pObj->m_pNext;
 			if (pObj != nullptr)  // nullptrチェック
 			{
-				pObj->Update();
+ 				pObj->Update();
 			}
 			pObj = pNext;
 		}
