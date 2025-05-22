@@ -162,13 +162,10 @@ Mesh {
   0,
   0;;
   Material {
-   0.800000;0.800000;0.800000;1.000000;;
+   0.021961;0.432941;0.800000;1.000000;;
    5.000000;
    0.000000;0.000000;0.000000;;
    0.000000;0.000000;0.000000;;
-   TextureFilename {
-    "C:\\Users\\student\\Documents\\Visual Studio 2019\\NEON_RUNNER\\data\\TEXTURE\\needle2.png";
-   }
   }
  }
  MeshNormals {
