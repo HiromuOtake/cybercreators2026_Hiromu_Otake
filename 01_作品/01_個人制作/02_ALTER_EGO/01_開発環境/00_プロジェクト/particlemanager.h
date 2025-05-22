@@ -9,8 +9,6 @@
 #define _PARTICLE_MANAGER_H_
 
 #include "particle.h"
-#include <d3dx9.h>
-#include <vector>
 
 class CParticleManager
 {
@@ -22,6 +20,7 @@ public:
     void Update();
     void Draw();
     void EmitParticles(D3DXVECTOR3 pos, int numParticles, float size, float speed, D3DXCOLOR color);
+    static constexpr float m_DECAY = 0.1f;
 private:
     std::vector<CParticle*> m_particles;  // パーティクルリスト
 };

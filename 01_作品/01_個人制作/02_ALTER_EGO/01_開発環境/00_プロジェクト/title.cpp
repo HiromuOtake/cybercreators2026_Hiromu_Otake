@@ -8,8 +8,6 @@
 #include "title.h"
 #include "bg.h"
 #include "block.h"
-#include <sstream>
-#include <fstream>
 
 //Ã“Iƒƒ“ƒo‰Šú‰»
 CPlayer* CTitle::m_pPlayer = nullptr;

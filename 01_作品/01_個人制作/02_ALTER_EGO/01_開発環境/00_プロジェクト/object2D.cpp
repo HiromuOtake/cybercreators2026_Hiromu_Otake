@@ -34,13 +34,13 @@ HRESULT CObject2D::Init()
 
 
 	//‘ÎŠpü‚Ì’·‚³‚ðŽZo‚·‚é
-	m_fLengthPlayer = sqrtf(m_fWidth * m_fWidth + m_fHeight * m_fHeight) / 2.0f;
+	m_fLengthPlayer = sqrtf(m_fWidth * m_fWidth + m_fHeight * m_fHeight) * HALF;
 
 	//‘ÎŠpü‚ÌŠp“x‚ðŽZo‚·‚é
 	m_fAnglePlayer = atan2f(m_fWidth, m_fHeight);
 
 	//’¸“_ƒoƒbƒtƒ@‚Ì¶¬
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_2D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,

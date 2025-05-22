@@ -8,7 +8,6 @@
 #ifndef _BULLET_H_
 #define _BULLET_H_
 
-#include <d3dx9.h>
 #include "manager.h"
 #include "billboard.h"
 
@@ -30,7 +29,7 @@ public:
 	D3DXVECTOR3* GetMove() { return &m_move; }
 	void SetDeath()override;
 	static const int m_MAXLIFE = 30;
-	int m_nLife;							// 弾の持続時間
+	int m_nLife;							// パーティクルの持続時間
 private:
 	static LPDIRECT3DTEXTURE9 m_pTextureTemp;
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;		// 頂点バッファ

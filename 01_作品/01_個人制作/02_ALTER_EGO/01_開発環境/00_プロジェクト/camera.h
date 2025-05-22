@@ -28,11 +28,7 @@ public:
 	static constexpr float m_CAMERAPOS_Z = 100.0f;
 	static constexpr float m_CORRECTIOM_WIDTH = 1.564f;
 	static constexpr float m_CORRECTIOM_HEIGHT = 1.67f;
-	//static constexpr float m_CAMERAPOS_X = 850.0f;
-	//static constexpr float m_CAMERAPOS_Y = 450.0f;
-	//static constexpr float m_CAMERAPOS_Z = 100.0f;
-	//static constexpr float m_CORRECTIOM_WIDTH = 1.405f;
-	//static constexpr float m_CORRECTIOM_HEIGHT = 1.39f;
+	static constexpr float m_CAMERAVECU = 1.0f;
 private:
 	D3DXVECTOR3 m_posV;			// éãì_
 	D3DXVECTOR3 m_posR;			// íçéãì_

@@ -10,18 +10,17 @@
 
 #include "main.h"
 #include "object.h"
-#include <cassert>
 
 class CObject2D : public CObject
 {
 public:
-	typedef struct
+	struct VERTEX_2D
 	{
 		D3DXVECTOR3 pos;	//頂点座標
 		float rhw;			//座標変換用係数(1.0で固定)
 		D3DCOLOR col;		//頂点カラー
 		D3DXVECTOR2 tex;	//テクスチャ座標
-	}VERTEX_2D;
+	};
 	CObject2D(int nPriority = 9);
 	~CObject2D()override;
 	HRESULT Init()override;

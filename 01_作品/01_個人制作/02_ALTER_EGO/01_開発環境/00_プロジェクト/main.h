@@ -9,14 +9,10 @@
 #define _MAIN_H_
 #define DIRECTINPUT_VERSION  (0x0800)     //ビルド時の警告対処用マクロ
 
-#include <Windows.h>
-#include <string>
 #include "d3dx9.h"
 #include "dinput.h"						//入力処理に必要
 #include"xaudio2.h"                       //サウンド処理に必要
 #include "Xinput.h"						//ジョイパッド処理に必要
-#include <time.h>
-#include <DirectXMath.h>
 
 //ライブラリのリンク 
 #pragma comment(lib,"d3d9.lib")			//描画処理に必要
@@ -37,8 +33,6 @@
 #define WINDOW_NAME         "ALTER EGO"              //ウィンドウの名前(キャプションに表示)
 
 #define _CRTDBG_MAP_ALLOC
-#include <cstdlib>
-#include <crtdbg.h>
 
 #ifdef _DEBUG
 #if 0
@@ -53,31 +47,28 @@
 #endif // FIND_MEM_LEAKS
 
 // stl
-#include <unordered_map>
-#include <vector>
-#include <string>
 
 //==============================================
 // 3Dポリゴン構造体
 //==============================================
-typedef struct
+struct VERTEX_3D
 {
 	D3DXVECTOR3 pos;	//頂点座標
 	D3DXVECTOR3 nor;	//法線ベクトル
 	D3DCOLOR col;		//頂点カラー
 	D3DXVECTOR2 tex;	//テクスチャ座標
-}VERTEX_3D;
+};
 
 //==============================================
 // 2Dポリゴン構造体
 //==============================================
-typedef struct
+struct VERTEX_2D
 {
 	D3DXVECTOR3 pos;     //頂点座標
 	float rhw;           //座標変換用係数(1.0で固定)
 	D3DCOLOR col;        //頂点カラー
 	D3DXVECTOR2 tex;     //テクスチャ座標
-}VERTEX_2D;
+};
 
 // 頂点フォーマットを定義するための構造体
 struct CUSTOMVERTEX

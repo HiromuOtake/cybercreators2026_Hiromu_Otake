@@ -40,8 +40,12 @@ public:
 	bool GetCloneActive() { return m_bCloneActive; }		// クローンサークルの状態の取得
 	static CPlayer* Create(D3DXVECTOR3 pos);				// プレイヤーの生成
 	void SetDeath()override;
+	static const int m_TOTLE_PLAYER_INTERVAL_JUMP = 30;		// タイトルでのジャンプ間隔
+	static const int m_TOTLE_PLAYER_MOVE_LIMIT = 2500;		// タイトルでの移動制限
+	static const int m_TOTLE_PLAYER_RESET_POS_X = 100;		// タイトルでの位置リセットX
+	static const int m_TOTLE_PLAYER_RESET_POS_Y = 600;		// タイトルでの位置リセットY
 	static const int m_PLAYER_LIFE = 1;						// プレイヤーの体力
-	static const int m_DEATH_COUNT = 30;					// プレイヤーが復活するまでの時間
+	static const int m_RESPAWN_COUNT = 30;					// プレイヤーが復活するまでの時間
 	static const int m_RESET_PLAYER_POS_X = 200;			// プレイヤーを復活させる場所(X座標)
 	static const int m_RESET_PLAYER_POS_Y = -1200;			// プレイヤーを復活させる場所(Y座標)
 	static constexpr float m_PLAYER_SHOT_POS = 20.0f;		// プレイヤーが弾を出す位置の補正
@@ -49,6 +53,7 @@ public:
 	static constexpr float m_PLAYER_ROTATION_SPEED = 0.15f;	// プレイヤーの回転の速さ
 	static constexpr float m_PLAYER_JUMP = 22.5f;			// プレイヤーのジャンプ力
 	static constexpr float m_PLAYER_SPEED = 1.0f;			// プレイヤーのスピード
+	static constexpr float m_DECAY_MOVE = 0.1f;				// moveの減衰量
 	static constexpr float m_LEFTRIGHT = 0.5f;
 private:
 	D3DXVECTOR3 m_move;
@@ -60,6 +65,7 @@ private:
 	bool m_IsRight;
 	bool m_bCloneActive;
 	bool m_bUseItem;
+	bool m_bRespawn;
 	static bool m_bUse;
 	static bool m_bhalfwaypoint;
 	int m_nTextureIdx;
@@ -70,6 +76,7 @@ private:
 	int m_nDeathTimer;
 	int m_nRandomAction; // 0: 走るのみ, 1: 走りながらジャンプ
 	int m_nTitleJump;
+	int m_nCntRespawn;
 	CCloneCircle* m_pCloneCircle;  // CloneCircle のインスタンス
 	CInputKeyboard* m_Keyboard;
 	CInputJoyPad* m_JoyPad;

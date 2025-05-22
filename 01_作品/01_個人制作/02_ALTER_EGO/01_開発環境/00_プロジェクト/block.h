@@ -9,7 +9,6 @@
 #include "objectX.h"
 #include "player.h"
 #include "clone.h"
-#include <iostream>
 
 // マクロ定義
 #define BLOCK_WIDTH			(100.0f)
@@ -24,7 +23,7 @@ public:
 		RED_ENABLED,
 		BLUE_ENABLED
 	};
-	typedef enum
+	enum BLOCK
 	{
 		BLOCK_NONE = 0,
 		BLOCK_NORMAL,
@@ -33,7 +32,7 @@ public:
 		BLOCK_BUTTON,
 		BLOCK_GOAL,
 		BLOCK_MAX
-	}BLOCK;
+	};
 	CBlock(int nPriority = 3);
 	~CBlock();
 	HRESULT Init() override;
@@ -48,6 +47,18 @@ public:
 	ButtonState GetCurrentState() const { return currentButtonState; }
 	void SetDeath()override;
 	BLOCK m_BlockType;
+	static const int m_NONE_TEX = 1;
+	static const int m_NUM_PARTICLE = 40;
+	static const int m_MAX_TIMER = 20;
+	static  constexpr float m_PARTICLE_SIZE = 1.0f;
+	static  constexpr float m_PARTICLE_SPEED = 3.0f;
+	static  constexpr float m_PARTICLE_RED = 1.0f;
+	static  constexpr float m_PARTICLE_GREEN = 0.5f;
+	static  constexpr float m_PARTICLE_BLUE = 0.0f;
+	static  constexpr float m_PARTICLE_ALPHA = 1.0f;
+	static  constexpr float m_GOAL_SPEED = 0.01f;
+	static  constexpr float m_OFFSET_XZ = 10.0f;
+	static  constexpr float m_OFFSET_Y = 20.0f;
 private:
 	ButtonState currentButtonState = ButtonState::RED_ENABLED;
 	int m_nModelIdx;
@@ -99,6 +110,9 @@ public:
 	void SetDeath()override;
 	bool& GetOpenDoor(); // 扉を開く状態を取得
 	static BUTTON_COLOR m_LastPressedButton;
+	static const int m_MODEL_IDX = 2;
+	static constexpr float m_ON_BUTTON_COLOR = 1.0f;
+	static constexpr float m_OFF_BUTTON_COLOR = 0.5f;
 private:
 	int m_nModelIdx;
 	int m_nTexIdx;

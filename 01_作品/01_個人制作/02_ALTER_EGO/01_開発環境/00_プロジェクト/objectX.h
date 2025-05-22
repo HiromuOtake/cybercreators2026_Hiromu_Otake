@@ -38,7 +38,6 @@ public:
 	const DWORD& GetNumMat();								// マテリアルの数
 	void BindModel(LPD3DXBUFFER BuffMat, DWORD dwNumMat, LPD3DXMESH Mesh);
 	static const int m_MAXTEXTURE = 126;
-	static constexpr float m_HALF_SIZE = 0.5f;			// モデルを半分のサイズ
 private:
 	LPDIRECT3DTEXTURE9 m_pTexture;
 	virtual void SetMatColor(D3DMATERIAL9* pMat,int nMatIdx);

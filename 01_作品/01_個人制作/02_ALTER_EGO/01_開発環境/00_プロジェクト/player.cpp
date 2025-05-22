@@ -16,8 +16,8 @@ bool CPlayer::m_bUse = true;
 // コンストラクタ
 //==============================================
 CPlayer::CPlayer(int nPriority) : CCharacter(nPriority), m_max{ 0.0f,0.0f,0.0f }, m_min{ 0.0f,0.0f,0.0f }, m_move{ 0.0f,0.0f,0.0f }
-, m_bIsLanding(false), m_bJumping(false), m_IsRight(false), m_bCloneActive(false), m_bUseItem(false), m_pCloneCircle(nullptr), m_pClone(nullptr),m_pItem(nullptr), m_Keyboard(nullptr), m_JoyPad(nullptr), m_pModelParts{}
-, m_nModelIdx(0), m_nTextureIdx(0), m_nLife(0), m_nType(PLAYER_NONE), m_nDeathTimer(0), m_nJumpCnt(0), m_nRandomAction(0), m_nTitleJump(0)
+, m_bIsLanding(false), m_bJumping(false), m_IsRight(false), m_bCloneActive(false), m_bUseItem(false), m_bRespawn(false), m_pCloneCircle(nullptr), m_pClone(nullptr),m_pItem(nullptr), m_Keyboard(nullptr), m_JoyPad(nullptr), m_pModelParts{}
+, m_nModelIdx(0), m_nTextureIdx(0), m_nLife(0), m_nType(PLAYER_NONE), m_nDeathTimer(0), m_nJumpCnt(0), m_nRandomAction(0), m_nTitleJump(0), m_nCntRespawn(0)
 {
 
 }
@@ -121,7 +121,7 @@ void CPlayer::Update()
 		if (m_pCloneCircle != nullptr)
 		{
 			// クローン選択中の操作
-			HandleCloneSelection();				// クローン選択の処理
+			HandleCloneSelection();
 			if (CManager::IsPaused())
 			{
 				if (m_pCloneCircle != nullptr)
@@ -140,35 +140,39 @@ void CPlayer::Update()
 	{
 		if (!CManager::IsPaused())
 		{
-			// Kキーでクローン選択を開始
-			if (m_Keyboard->GetTrigger(DIK_K) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_X))
+			if (m_bRespawn == false)
 			{
-				m_bCloneActive = !m_bCloneActive;	// 表示切り替え
-				if (m_bCloneActive)
+				// Kキーでクローン選択を開始
+				if (m_Keyboard->GetTrigger(DIK_K) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_X))
 				{
-					pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_SPAWNSIRCLE);
-					m_pCloneCircle = m_pCloneCircle->Create(GetPos()); 		// 描画を再有効化
-					m_pCloneCircle->Activate();
-					if (m_pClone != nullptr)
+					m_bCloneActive = !m_bCloneActive;	// 表示切り替え
+					if (m_bCloneActive)
 					{
-						m_pClone->SetStopClone(true);
-						m_pClone->SetDeath();
-						m_pClone = nullptr;
+						pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_SPAWNSIRCLE);
+						m_pCloneCircle = m_pCloneCircle->Create(GetPos());
+						m_pCloneCircle->Activate();		// 描画を再有効化
+						if (m_pClone != nullptr)
+						{
+							m_pClone->SetStopClone(true);
+							m_pClone->SetDeath();
+							m_pClone = nullptr;
+						}
 					}
-				}
-				else if (!m_bCloneActive)
-				{
-					pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_DELETECIRCLE);
-					m_pCloneCircle->SetDeath();		// リソースの解放
-					m_pCloneCircle = nullptr;
-					CManager::SetPaused(false);		// ポーズ解除
-
-					if (m_pClone != nullptr)
+					else if (!m_bCloneActive)
 					{
-						m_pClone->SetStopClone(false);
+						pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_DELETECIRCLE);
+						m_pCloneCircle->SetDeath();		// リソースの解放
+						m_pCloneCircle = nullptr;
+						CManager::SetPaused(false);		// ポーズ解除
+
+						if (m_pClone != nullptr)
+						{
+							m_pClone->SetStopClone(false);
+						}
 					}
 				}
 			}
+
 		}
 	}
 }
@@ -249,6 +253,7 @@ void CPlayer::PlayerMovement()
 
 	if (CManager::GetMode() == CScene::MODE_TITLE)
 	{
+		// タイトルで動くプレイヤー用の処理
 		TitlePlayerMovement();
 	}
 	if (CManager::GetMode() == CScene::MODE_GAME)
@@ -262,7 +267,7 @@ void CPlayer::PlayerMovement()
 				m_move.x += sinf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_PLAYER_SPEED;
 				m_move.z += cosf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_PLAYER_SPEED;
 
-				pRot.y = pCamera->y + D3DX_PI * -0.5f;
+				pRot.y = pCamera->y + D3DX_PI * -HALF;
 			}
 			else if (m_Keyboard->GetPress(DIK_A) == true || m_JoyPad->GetJoyPadPress(CInput::JOYKEY_LEFT) == true)
 			{
@@ -271,7 +276,7 @@ void CPlayer::PlayerMovement()
 				m_move.x += sinf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_PLAYER_SPEED;
 				m_move.z += cosf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_PLAYER_SPEED;
 
-				pRot.y = pCamera->y + D3DX_PI * +0.5f;
+				pRot.y = pCamera->y + D3DX_PI * +HALF;
 			}
 			else
 			{
@@ -297,16 +302,14 @@ void CPlayer::PlayerMovement()
 	pPos.z += m_move.z;
 
 	//移動量を更新(減衰させる)
-	m_move.x += (0.0f - m_move.x) * 0.1f;
-	//m_move.y += (0.0f - m_move.y) * 0.1f;
-	m_move.z += (0.0f - m_move.z) * 0.1f;
+	m_move.x += (0.0f - m_move.x) * m_DECAY_MOVE;
+	m_move.z += (0.0f - m_move.z) * m_DECAY_MOVE;
 
 	bool bLanding = false;
 
 	pPos.x += m_move.x;
 
-
-	for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
+	for (int nCntPrio = 0; nCntPrio < m_MAXPRIORITY; nCntPrio++)
 	{// プライオリティ分回す
 
 		CObject* pObj = CObject::GetTop(nCntPrio);
@@ -326,7 +329,7 @@ void CPlayer::PlayerMovement()
 
 	pPos.y += m_move.y;
 
-	for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
+	for (int nCntPrio = 0; nCntPrio < m_MAXPRIORITY; nCntPrio++)
 	{// プライオリティ分回す
 
 		CObject* pObj = CObject::GetTop(nCntPrio);
@@ -384,7 +387,7 @@ void CPlayer::TitlePlayerMovement()
 		m_move.x += sinf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_PLAYER_SPEED;
 		m_move.z += cosf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_PLAYER_SPEED;
 
-		pRot.y = pCamera->y + D3DX_PI * -0.5f;
+		pRot.y = pCamera->y + D3DX_PI * -HALF;
 
 		m_nTitleJump++;
 
@@ -392,7 +395,7 @@ void CPlayer::TitlePlayerMovement()
 		{
 			if (m_nJumpCnt <= 0)
 			{
-				if (m_nTitleJump > 30)
+				if (m_nTitleJump > m_TOTLE_PLAYER_INTERVAL_JUMP)
 				{
 					m_move.y = +m_PLAYER_JUMP;
 					m_nJumpCnt++;
@@ -401,7 +404,7 @@ void CPlayer::TitlePlayerMovement()
 				}
 			}
 		}
-		if (pPos.x > 2500)
+		if (pPos.x > m_TOTLE_PLAYER_MOVE_LIMIT)
 		{
 			//// ランダムシード設定（必要に応じて）
 			//srand(static_cast<unsigned int>(time(nullptr)));
@@ -409,8 +412,8 @@ void CPlayer::TitlePlayerMovement()
 			//// ランダムアクションを一度だけ決定
 			//m_nRandomAction = rand() % 2; // 0 または 1 をランダムに設定
 
-			pPos.x = -100;
-			pPos.y = -600;
+			pPos.x = -m_TOTLE_PLAYER_RESET_POS_X;
+			pPos.y = -m_TOTLE_PLAYER_RESET_POS_Y;
 		}
 	}
 }
@@ -426,9 +429,13 @@ void CPlayer::Draw()
 		m_pCloneCircle->Draw();
 	}
 
-	if (m_nType == PLAYER_DEATH)
+	if (m_bRespawn == true)
 	{
-
+		m_nCntRespawn++;
+		if (m_nCntRespawn >= m_RESPAWN_COUNT)
+		{
+			CManager::SetMode(CScene::MODE::MODE_GAME);
+		}
 	}
 	else
 	{
@@ -484,7 +491,13 @@ bool CPlayer::CollisionUPDOWN(bool& bIsLanding, CObject* pObj)
 
 				if (pBlockType == CBlock::BLOCK::BLOCK_NORMAL)
 				{
+					// 当たり判定(押し出し)
 					m_pCollision->CollisionPushBoxUpDown(pPos, pPosOld, PlayerSize, pBlockPos, pBlockSize, m_move, bIsLanding, m_nJumpCnt);
+				}
+				else if (pBlockType == CBlock::BLOCK::BLOCK_NEEDLE)
+				{
+					// 当たり判定(判定のみ)
+					m_pCollision->CollisionHitTriggerRespawnBoxUpDown(pPos, pPosOld, PlayerSize, pBlockPos, pBlockSize, m_bRespawn);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_DOOR)
 				{
@@ -494,14 +507,18 @@ bool CPlayer::CollisionUPDOWN(bool& bIsLanding, CObject* pObj)
 						// 扉が開いている場合は当たり判定をスキップ
 						return false;
 					}
+
+					// 当たり判定(押し出し)
 					m_pCollision->CollisionPushBoxUpDown(pPos, pPosOld, PlayerSize, pBlockPos, pBlockSize, m_move, bIsLanding, m_nJumpCnt);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_BUTTON)
 				{
+					// 当たり判定(押し出し)
 					m_pCollision->CollisionPushBoxUpDown(pPos, pPosOld, PlayerSize, pBlockPos, pBlockSize, m_move, bIsLanding, m_nJumpCnt);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_GOAL)
 				{
+					// 当たり判定(判定のみ)
 					m_pCollision->CollisionHitTriggerBoxUpDown(pPos, pPosOld, PlayerSize, pBlockPos, pBlockSize, m_bUse);
 				}
 			}
@@ -527,6 +544,7 @@ bool CPlayer::CollisionUPDOWN(bool& bIsLanding, CObject* pObj)
 
 				if (pItemType == CItem::ITEM::ITEM_STAR)
 				{
+					// 当たり判定(判定のみ)
 					m_pCollision->CollisionHitTriggerBoxUpDown(pPos, pPosOld, PlayerSize, pItemPos, pItemSize, m_bUseItem);
 				}
 			}
@@ -560,7 +578,6 @@ void CPlayer::CollisionLEFTRIGHT(CObject* pObj)
 		if (type == CObject::TYPE::TYPE_BLOCK)
 		{// typeがBLOCKなら
 
-
 			CBlock* pBlock = dynamic_cast<CBlock*>(pObj);
 			if (pBlock != nullptr)
 			{
@@ -579,7 +596,13 @@ void CPlayer::CollisionLEFTRIGHT(CObject* pObj)
 
 				if (pBlockType == CBlock::BLOCK::BLOCK_NORMAL)
 				{
+					// 当たり判定(押し出し)
 					m_pCollision->CollisionPushBoxLeftRight(pPos, pPosOld, PlayerSize, pBlockPos, BlockSize);
+				}
+				else if (pBlockType == CBlock::BLOCK::BLOCK_NEEDLE)
+				{
+					// 当たり判定(判定のみ)
+					m_pCollision->CollisionHitTriggerRespawnBoxLeftRight(pPos, pPosOld, PlayerSize, pBlockPos, BlockSize, m_bRespawn);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_DOOR)
 				{
@@ -590,14 +613,17 @@ void CPlayer::CollisionLEFTRIGHT(CObject* pObj)
 						return;
 					}
 
+					// 当たり判定(押し出し)
 					m_pCollision->CollisionPushBoxLeftRight(pPos, pPosOld, PlayerSize, pBlockPos, BlockSize);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_BUTTON)
 				{
+					// 当たり判定(押し出し)
 					m_pCollision->CollisionPushBoxLeftRight(pPos, pPosOld, PlayerSize, pBlockPos, BlockSize);
 				}
 				else if (pBlockType == CBlock::BLOCK::BLOCK_GOAL)
 				{
+					// 当たり判定(判定のみ)
 					m_pCollision->CollisionHitTriggerBoxLeftRight(pPos, pPosOld, PlayerSize, pBlockPos, BlockSize, m_bUse);
 				}
 			}
@@ -621,6 +647,7 @@ void CPlayer::CollisionLEFTRIGHT(CObject* pObj)
 
 				if (pItemType == CItem::ITEM::ITEM_STAR)
 				{
+					// 当たり判定(判定のみ)
 					m_pCollision->CollisionHitTriggerBoxLeftRight(pPos, pPosOld, PlayerSize, pItemPos, ItemSize, m_bUseItem);
 				}
 			}

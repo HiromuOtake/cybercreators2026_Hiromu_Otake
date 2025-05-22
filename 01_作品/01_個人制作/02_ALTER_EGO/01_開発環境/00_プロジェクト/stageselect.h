@@ -10,8 +10,6 @@
 
 #include "scene.h"
 #include "bg.h"
-#include <vector>
-#include <string>
 
 class CStageSelect : public CScene
 {
@@ -22,7 +20,7 @@ public:
     void Uninit() override;
     void Update() override;
     void Draw() override;
-    static const int m_NUM_STAGE = 5;	// ステージの数
+    static const int m_NUM_STAGE = 3;	// ステージの数
 private:
     int m_selectedStage;                // 選択中のステージ番号
     int m_stageTextures[m_NUM_STAGE];   // 各ステージ用のテクスチャ

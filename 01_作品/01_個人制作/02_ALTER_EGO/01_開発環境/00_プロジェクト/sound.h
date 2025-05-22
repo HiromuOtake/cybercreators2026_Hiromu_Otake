@@ -12,7 +12,7 @@
 class CSound
 {
 public:
-	typedef enum
+	enum SOUND_LABEL
 	{
 		SOUND_LABEL_BGM000 = 0,			// BGM0
 		SOUND_LABEL_BGM001,				// BGM1
@@ -26,15 +26,15 @@ public:
 		SOUND_LABEL_SE_SPAWNSIRCLE,		// サークル消滅音
 		SOUND_LABEL_SE_CHOOSECLONE,		// クローン選択音
 		SOUND_LABEL_MAX,
-	} SOUND_LABEL;
+	};
 
-	typedef struct
+	struct SOUNDINFO
 	{
 		const char* pFilename;	// ファイル名
 		int nCntLoop;		    // ループカウント
 		float Volume;           //音量
-	} SOUNDINFO;
-
+	};
+	
 	CSound();
 	~CSound();
 	HRESULT Init(HWND hWnd);

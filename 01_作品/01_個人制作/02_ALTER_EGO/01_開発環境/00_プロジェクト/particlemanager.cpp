@@ -91,9 +91,9 @@ void CParticleManager::EmitParticles(D3DXVECTOR3 pos, int numParticles, float si
     {
         // ランダムな移動を設定
         D3DXVECTOR3 move;
-        move.x = (rand() % 10 - 5) * speed * 0.1f;
-        move.y = (rand() % 10) * speed * 0.1f;
-        move.z = (rand() % 10 - 5) * speed * 0.1f;
+        move.x = (rand() % 10 - 5) * speed * m_DECAY;
+        move.y = (rand() % 10) * speed * m_DECAY;
+        move.z = (rand() % 10 - 5) * speed * m_DECAY;
 
         // パーティクル生成
         CParticle::Create(pos, move, size, speed, color);

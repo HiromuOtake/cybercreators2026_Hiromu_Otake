@@ -13,23 +13,23 @@ public:
 //==============================================
 //モデルの構造体
 //==============================================
-	typedef struct
+	struct Parts
 	{
 		D3DXVECTOR3 pos;
 		D3DXVECTOR3 rot;
 		int nIdx;
 		int nIdxModelParent;    // 親のインデックス
-	}Parts;
+	};
 
 	static const int m_MAXTEXTURE = 126;
 
-	typedef struct
+	struct ModelInfo
 	{
 		LPD3DXBUFFER m_pBuffMat;		// マテリアルへのポインタ
 		DWORD m_dwNumMat;				// マテリアルの数
 		LPD3DXMESH m_pMesh;				// メッシュへのポインタ
 		bool m_bUse;
-	}ModelInfo;
+	};
 
 	CModelParts();
 	~CModelParts();

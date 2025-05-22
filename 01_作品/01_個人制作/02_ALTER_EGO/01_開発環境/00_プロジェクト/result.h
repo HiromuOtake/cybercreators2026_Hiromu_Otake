@@ -21,7 +21,7 @@ public:
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;	// 頂点バッファ
 	LPDIRECT3DTEXTURE9 m_pTexture;		//テクスチャへのポインタ
-	CNumber* m_pNumber;
+	//CNumber* m_pNumber;
 };
 
 #pragma once

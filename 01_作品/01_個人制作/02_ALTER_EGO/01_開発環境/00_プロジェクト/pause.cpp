@@ -7,8 +7,6 @@
 
 #include "pause.h"
 #include "game.h"
-#include <sstream>
-#include <iomanip>
 
 //======================================================
 // コンストラクタ
@@ -39,23 +37,25 @@ HRESULT CPause::Init()
 
     pTex = CManager::GetTexture()->GetAddress(CManager::GetTexture()->Regist("data\\Texture\\000.png"));
 
-    m_nTexIdx = CObject2D::Create(pTex, D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f , -1.0f), SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f, 0.5);
+    m_nTexIdx = CObject2D::Create(pTex, D3DXVECTOR3(SCREEN_WIDTH * HALF, SCREEN_HEIGHT * HALF, -m_PAUSE_BG_Z), SCREEN_WIDTH, SCREEN_HEIGHT, 1.0f, 0.5);
 
     pTex = CManager::GetTexture()->GetAddress(CManager::GetTexture()->Regist("data\\Texture\\pauseBG.png"));
 
-    m_nPauseBGTex = CObject2D::Create(pTex, D3DXVECTOR3(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f, -1.0f), SCREEN_WIDTH * 0.75f, SCREEN_HEIGHT * 0.75f, 1.0f, 1.0f);
+    m_nPauseBGTex = CObject2D::Create(pTex, D3DXVECTOR3(SCREEN_WIDTH * HALF, SCREEN_HEIGHT * HALF, -m_PAUSE_BG_Z), SCREEN_WIDTH * m_PAUSE_CORRECTION, SCREEN_HEIGHT * m_PAUSE_CORRECTION, 1.0f, 1.0f);
 
-    float fInitialPointY = 380.0f;
+    float fInitialPointY = m_INITIAL_POINT;
 
-    for (int i = 0; i < 3; i++, fInitialPointY += 75.0f)
+    for (int i = 0; i < m_MAX_PAUSE; i++)
     {
+        fInitialPointY += m_SHIFT;
+
         std::ostringstream filename;
         filename << "data\\Texture\\pause" << std::setfill('0') << std::setw(2) << (i + 1) << ".png";
         pTex = CManager::GetTexture()->GetAddress(CManager::GetTexture()->Regist(filename.str().c_str()));
 
         float alpha = (i == m_nSelectPause) ? 1.0f : 0.5f;
 
-        m_pPauseOptions[i] = CObject2D::Create(pTex, D3DXVECTOR3(SCREEN_WIDTH * 0.5f, fInitialPointY, 0.0f), 400.0f, 60.0f, 1.0f, alpha);
+        m_pPauseOptions[i] = CObject2D::Create(pTex, D3DXVECTOR3(SCREEN_WIDTH * HALF, fInitialPointY, 0.0f), m_PAUSE_UI_WIDTH, m_PAUSE_UI_HEIGHT, 1.0f, alpha);
     }
 
 	return S_OK;

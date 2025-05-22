@@ -32,7 +32,7 @@ HRESULT CBg::Init()
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();;		//デバイスへのポインタ
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VTX_2D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VTX_2D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_2D,
 		D3DPOOL_MANAGED,
@@ -44,7 +44,7 @@ HRESULT CBg::Init()
 	// テクスチャの初期設定
 	CObject2D::SetTexture(1.0f);
 	// 中央に配置
-	CObject2D::SetPos(D3DXVECTOR3((float)SCREEN_WIDTH * 0.5f, (float)SCREEN_HEIGHT * 0.5f, 0.0f));
+	CObject2D::SetPos(D3DXVECTOR3((float)SCREEN_WIDTH * HALF, (float)SCREEN_HEIGHT * HALF, 0.0f));
 
 	CObject2D::Init();
 
@@ -73,21 +73,21 @@ void CBg::Update()
 	if (CManager::GetMode() == CScene::MODE_GAME)
 	{
 		// 背景1を左に移動
-		m_texScrollSpeed01 -= 2.0f;
+		m_texScrollSpeed01 -= m_TEX_SCROLL_SPEED;
 		if (m_texScrollSpeed01 <= -SCREEN_WIDTH) // 背景1が画面外に出たらリセット
 		{
 			m_texScrollSpeed01 = SCREEN_WIDTH;
 		}
 
-		// 背景2を左に移動
-		m_texScrollSpeed02 -= 1.0f;
-		if (m_texScrollSpeed02 <= -SCREEN_WIDTH) // 背景2が画面外に出たらリセット
-		{
-			m_texScrollSpeed02 = SCREEN_WIDTH;
-		}
+		//// 背景2を左に移動
+		//m_texScrollSpeed02 -= 1.0f;
+		//if (m_texScrollSpeed02 <= -SCREEN_WIDTH) // 背景2が画面外に出たらリセット
+		//{
+		//	m_texScrollSpeed02 = SCREEN_WIDTH;
+		//}
 
 		// 背景1と背景2の位置を設定
-		SetPos(D3DXVECTOR3((float)SCREEN_WIDTH * 0.5f + m_texScrollSpeed01, (float)SCREEN_HEIGHT * 0.5f, 0.0f));
+		SetPos(D3DXVECTOR3((float)SCREEN_WIDTH * HALF + m_texScrollSpeed01, (float)SCREEN_HEIGHT * HALF, 0.0f));
 	}
 
 	CObject2D::Update();
@@ -195,7 +195,7 @@ CBg* CBg::Create(CScene::MODE mode)
 			break;
 		}
 
-		if (nId == -1)
+		if (nId == -m_ERROR_ID)
 		{
 			OutputDebugStringA("テクスチャのロードに失敗しました。\n");
 			delete pBg;
@@ -203,7 +203,7 @@ CBg* CBg::Create(CScene::MODE mode)
 		}
 		else
 		{
-			char debugMessage[256];
+			char debugMessage[m_MAX_LETTER];
 			sprintf(debugMessage, "テクスチャロード成功: ID = %d\n", nId);
 			OutputDebugStringA(debugMessage);
 		}

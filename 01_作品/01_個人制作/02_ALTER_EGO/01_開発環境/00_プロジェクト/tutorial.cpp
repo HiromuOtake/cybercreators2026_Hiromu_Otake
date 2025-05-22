@@ -11,7 +11,7 @@
 //======================================================
 // コンストラクタ
 //======================================================
-CTutorial::CTutorial() : m_pTexture(nullptr), m_pVtxBuff(nullptr), m_pNumber(nullptr)
+CTutorial::CTutorial() : m_pTexture(nullptr), m_pVtxBuff(nullptr)/*, m_pNumber(nullptr)*/
 {
 
 }

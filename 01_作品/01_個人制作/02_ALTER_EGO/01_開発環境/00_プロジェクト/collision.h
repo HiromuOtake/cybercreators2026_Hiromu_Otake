@@ -16,7 +16,9 @@ public:
 	void CollisionPushBoxLeftRight(D3DXVECTOR3& mainpos, D3DXVECTOR3 mainposold, D3DXVECTOR3 mainsize, D3DXVECTOR3 objpos, D3DXVECTOR3 objsize);
 	void CollisionHitTriggerBoxUpDown(D3DXVECTOR3& mainpos, D3DXVECTOR3 mainposold, D3DXVECTOR3 mainsize, D3DXVECTOR3 objpos, D3DXVECTOR3 objsize, bool& bUse);
 	void CollisionHitTriggerBoxLeftRight(D3DXVECTOR3& mainpos, D3DXVECTOR3 mainposold, D3DXVECTOR3 mainsize, D3DXVECTOR3 objpos, D3DXVECTOR3 objsize, bool& bUse);
-	static constexpr float m_HALF_SIZE = 0.5f;			// モデルを半分のサイズ
+	void CollisionHitTriggerRespawnBoxUpDown(D3DXVECTOR3& mainpos, D3DXVECTOR3 mainposold, D3DXVECTOR3 mainsize, D3DXVECTOR3 objpos, D3DXVECTOR3 objsize, bool& bUse);
+	void CollisionHitTriggerRespawnBoxLeftRight(D3DXVECTOR3& mainpos, D3DXVECTOR3 mainposold, D3DXVECTOR3 mainsize, D3DXVECTOR3 objpos, D3DXVECTOR3 objsize, bool& bUse);
+	bool CollisionPushCircle(D3DXVECTOR3 mainpos, D3DXVECTOR3 objpos, D3DXVECTOR3 mainsize, D3DXVECTOR3 objsize);
 	static constexpr float m_GOAL_CORRECTION = 50.0f;		// ゴールの判定の補正
 private:
 	bool m_bCollisionSwitch;

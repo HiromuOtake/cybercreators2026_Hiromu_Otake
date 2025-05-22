@@ -45,8 +45,9 @@ public:
 	static void SetMode(CScene::MODE mode);
 	static void SetPaused(bool paused) { m_bPaused = paused; }
 	static bool IsPaused() { return m_bPaused; }
-	static CFade* GetFade();
-	static void SetFadeInstance(CFade* fade);
+	//static CFade* GetFade();
+	//static void SetFadeInstance(CFade* fade);
+	static const int m_MODE_RESET = 1;
 private:
 	static CRenderer* m_pRnderer;					// レンダラー情報
 	static CInputKeyboard* m_pKeyboard;				// キーボード情報
@@ -61,6 +62,6 @@ private:
 	static std::string m_nextStageFile;				// 次のステージファイル名
 	static CScene::MODE m_nextSceneMode;			// 次のシーンモード
 	static bool m_bPaused;							// ポーズ状態を管理する静的メンバ
-	static CFade* m_pFade;
+	//static CFade* m_pFade;
 };
 #pragma once

@@ -11,12 +11,12 @@ class CModel
 {
 public:
 	static const int m_MAXTEXTURE = 126;
-	typedef struct
+	struct ModelInfo
 	{
 		LPD3DXBUFFER m_pBuffMat;		// マテリアルへのポインタ
 		DWORD m_dwNumMat;				// マテリアルの数
 		LPD3DXMESH m_pMesh;				// メッシュへのポインタ
-	}ModelInfo;
+	};
 	CModel();
 	~CModel();
 	void Unload();								// モデル破棄

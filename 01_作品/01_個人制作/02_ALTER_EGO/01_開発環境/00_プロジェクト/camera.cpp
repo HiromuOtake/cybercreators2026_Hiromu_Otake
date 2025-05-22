@@ -36,7 +36,7 @@ HRESULT CCamera::Init()
 	m_Keyboard = CManager::GetKeyboard();
 	m_posV = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, -m_CAMERAPOS_Z);
 	m_posR = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, 0.0f);
-	m_vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	m_vecU = D3DXVECTOR3(0.0f, m_CAMERAVECU, 0.0f);
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	return S_OK;
 }
@@ -57,7 +57,7 @@ void CCamera::Update()
 	//if (m_Keyboard->GetTrigger(DIK_F5) == true)
 	//{
 	//	m_bCameraChanger = m_bCameraChanger ? false : true;
-
+	//
 	//	if (m_bCameraChanger == false)
 	//	{
 	//		m_posV = D3DXVECTOR3(m_CAMERAPOS_X, -m_CAMERAPOS_Y, -m_CAMERAPOS_Z);
@@ -66,27 +66,27 @@ void CCamera::Update()
 	//		m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	//	}
 	//}
-
-	if (m_bCameraChanger == true)
-	{
-		if (CManager::GetMode() == CScene::MODE_GAME)
-		{
-			if (CGame::GetPlayer() != nullptr)
-			{
-				m_posR = CGame::GetPlayer()->GetPos();
-			}
-		}
-
-		m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
-		m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
-
-		m_posV.y = m_posR.y;
-	}
-	else
-	{
-
-	}
-
+	//
+	//if (m_bCameraChanger == true)
+	//{
+	//	if (CManager::GetMode() == CScene::MODE_GAME)
+	//	{
+	//		if (CGame::GetPlayer() != nullptr)
+	//		{
+	//			m_posR = CGame::GetPlayer()->GetPos();
+	//		}
+	//	}
+	//
+	//	m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
+	//	m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
+	//
+	//	m_posV.y = m_posR.y;
+	//}
+	//else
+	//{
+	//
+	//}
+	//
 	////カメラ移動
 	//if (m_Keyboard->GetPress(DIK_W) == true)
 	//{
@@ -100,7 +100,7 @@ void CCamera::Update()
 	//{
 	//	m_posR.z += cosf(m_rot.y - D3DX_PI) * 2;
 	//	m_posR.x += sinf(m_rot.y - D3DX_PI) * 2;
-
+	//
 	//	m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
 	//	m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
 	//}
@@ -108,7 +108,7 @@ void CCamera::Update()
 	//{
 	//	m_posR.z -= cosf(m_rot.y + 1.57f) * 2;
 	//	m_posR.x -= sinf(m_rot.y + 1.57f) * 2;
-
+	//
 	//	m_posV.x = m_posR.x + sinf(m_rot.y + D3DX_PI) * 600.0f;
 	//	m_posV.z = m_posR.z + cosf(m_rot.y + D3DX_PI) * 600.0f;
 	//}
@@ -159,17 +159,17 @@ void CCamera::SetCamera()
 	//ビューマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxView);
 
-	D3DXVECTOR3 adjust = D3DXVECTOR3(0, 0, 0);
-
+	//D3DXVECTOR3 adjust = D3DXVECTOR3(0, 0, 0);
+	//
 	//if (m_nShakeTime > 0)
 	//{
 	//	m_nShakeTime--;
 	//	adjust.x += m_fShakePower;
 	//	adjust.y += m_fShakePower;
-
+	//
 	//	adjust.x = (float)(rand()% 100 - 50) * m_fShakePower;
 	//	adjust.y = (float)(rand()% 100 - 50) * m_fShakePower;
-
+	//
 	//	PosV += adjust;
 	//	PosR += adjust;
 	//}

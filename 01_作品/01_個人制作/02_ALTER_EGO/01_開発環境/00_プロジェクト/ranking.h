@@ -17,23 +17,23 @@
 //class CRanking : public CScene
 //{
 //public:
-//	typedef struct
+//	struct RankScore
 //	{
 //		D3DXVECTOR3 pos;     //位置
 //		int nScore;          //スコア
 //		int nScorePos;		//テクスチャの位置
 //		bool bRight;		//新しくランクインした場合点灯させる
-//	}RankScore;
+//	};
 //
 //	// 画面の種類
-//	typedef enum
+//	enum MODE
 //	{
 //		MODE_TITLE = 0,
 //		MODE_TYUTORIAL,
 //		MODE_GAME,
 //		MODE_RESULT,
 //		MODE_MAX,
-//	}MODE;
+//	};
 //	CRanking();							// コンストラクタ
 //	~CRanking()override;					// デストラクタ
 //	HRESULT Init()override;				// 初期設定

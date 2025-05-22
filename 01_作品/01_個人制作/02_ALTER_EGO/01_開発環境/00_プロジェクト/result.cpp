@@ -11,7 +11,7 @@
 //======================================================
 // コンストラクタ
 //======================================================
-CResult::CResult() : m_pTexture(nullptr), m_pVtxBuff(nullptr), m_pNumber(nullptr)
+CResult::CResult() : m_pTexture(nullptr), m_pVtxBuff(nullptr)/*, m_pNumber(nullptr)*/
 {
 
 }

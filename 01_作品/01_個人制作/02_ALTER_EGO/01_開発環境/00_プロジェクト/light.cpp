@@ -31,12 +31,8 @@ CLight::~CLight()
 //=====================================
 HRESULT CLight::Init()
 {
-	LPDIRECT3DDEVICE9 pDevice;		//デバイスへのポインタ
+	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();
 
-	CRenderer* pRenderer = CManager::GetRenderere();
-
-	//デバイスの取得
-	pDevice = pRenderer->GetDevice();
 	D3DXVECTOR3 vecDir;			//設定用ベクトル
 
 	for (int nCntLight = 0; nCntLight < m_MAXLIGHT; nCntLight++)
@@ -51,19 +47,19 @@ HRESULT CLight::Init()
 		switch (nCntLight)
 		{
 		case 0:
-			vecDir = D3DXVECTOR3(0.2f, -0.8f, 0.4f);
+			vecDir = D3DXVECTOR3(m_LIGHT_X_0, -m_LIGHT_Y_0, m_LIGHT_Z_0);
 			break;
 
 		case 1:
-			vecDir = D3DXVECTOR3(0.2f, -1.0f, -1.0f);
+			vecDir = D3DXVECTOR3(m_LIGHT_X_1, -m_LIGHT_Y_1, -m_LIGHT_Z_1);
 			break;
 
 		case 2:
-			vecDir = D3DXVECTOR3(0.0f, 1.0f, 1.0f);
+			vecDir = D3DXVECTOR3(m_LIGHT_X_2, m_LIGHT_Y_2, m_LIGHT_Z_2);
 			break;
 
 		case 3:
-			vecDir = D3DXVECTOR3(-0.2f, 0.4f, -0.4f);
+			vecDir = D3DXVECTOR3(-m_LIGHT_X_3, m_LIGHT_Y_3, -m_LIGHT_Z_3);
 			break;
 
 		default:

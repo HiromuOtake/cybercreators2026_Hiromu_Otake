@@ -14,13 +14,13 @@
 class CClone : public CCharacter
 {
 public:
-	typedef enum
+	enum TYPE
 	{
 		PLAYER_NONE = 0,
 		PLAYER_NORMAL,
 		PLAYER_DEATH,
 		PLAYER_MAX,
-	}TYPE;
+	};
 	CClone(int nPriority = 3);
 	~CClone()override;
 	HRESULT Init()override;
@@ -41,7 +41,9 @@ public:
 	static constexpr float m_CLONE_ROTATION_SPEED = 0.15f;					// クローンの回転の速さ
 	static constexpr float m_CLONE_JUMP = 22.5f;							// クローンのジャンプ力
 	static constexpr float m_CLONE_SPEED = 1.0f;							// クローンのスピード
-	static constexpr float m_LEFTRIGHT = 0.5f;
+	static constexpr float m_MOVE = 0.5f;									// 移動量
+	static constexpr float m_GRAVITY = 1.0f;								// 重力
+	static constexpr float m_DECAY_MOVE = 0.1f;								// moveの減衰量
 	void SetDeath()override;
 private:
 	D3DXVECTOR3 m_move;

@@ -141,19 +141,19 @@ void CClone::Update()
 			{
 				SetMotion(MOTION_MOVE);
 
-				m_move.x += sinf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_CLONE_SPEED;
-				m_move.z += cosf(pCamera->y + D3DX_PI * m_LEFTRIGHT) * m_CLONE_SPEED;
+				m_move.x += sinf(pCamera->y + D3DX_PI * m_MOVE) * m_CLONE_SPEED;
+				m_move.z += cosf(pCamera->y + D3DX_PI * m_MOVE) * m_CLONE_SPEED;
 
-				pRot.y = pCamera->y + D3DX_PI * -0.5f;
+				pRot.y = pCamera->y + D3DX_PI * -HALF;
 			}
 			else if (m_Keyboard->GetPress(DIK_A) == true || m_JoyPad->GetJoyPadPress(CInput::JOYKEY_LEFT) == true)
 			{
 				SetMotion(MOTION_MOVE);
 
-				m_move.x += sinf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_CLONE_SPEED;
-				m_move.z += cosf(pCamera->y + D3DX_PI * -m_LEFTRIGHT) * m_CLONE_SPEED;
+				m_move.x += sinf(pCamera->y + D3DX_PI * -m_MOVE) * m_CLONE_SPEED;
+				m_move.z += cosf(pCamera->y + D3DX_PI * -m_MOVE) * m_CLONE_SPEED;
 
-				pRot.y = pCamera->y + D3DX_PI * +0.5f;
+				pRot.y = pCamera->y + D3DX_PI * +HALF;
 			}
 			else
 			{
@@ -174,21 +174,20 @@ void CClone::Update()
 			}
 		}
 
-		m_move.y -= 1.0f;
+		m_move.y -= m_GRAVITY;
 
 		//位置を更新
 		pPos.z += m_move.z;
 
 		//移動量を更新(減衰させる)
-		m_move.x += (0.0f - m_move.x) * 0.1f;
-		//m_move.y += (0.0f - m_move.y) * 0.1f;
-		m_move.z += (0.0f - m_move.z) * 0.1f;
+		m_move.x += (0.0f - m_move.x) * m_DECAY_MOVE;
+		m_move.z += (0.0f - m_move.z) * m_DECAY_MOVE;
 
 		bool bIsLanding = false;
 
 		pPos.x += m_move.x;
 
-		for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
+		for (int nCntPrio = 0; nCntPrio < m_MAXPRIORITY; nCntPrio++)
 		{// プライオリティ分回す
 
 			CObject* pObj = CObject::GetTop(nCntPrio);
@@ -208,7 +207,7 @@ void CClone::Update()
 
 		pPos.y += m_move.y;
 
-		for (int nCntPrio = 0; nCntPrio < 15; nCntPrio++)
+		for (int nCntPrio = 0; nCntPrio < m_MAXPRIORITY; nCntPrio++)
 		{// プライオリティ分回す
 
 			CObject* pObj = CObject::GetTop(nCntPrio);

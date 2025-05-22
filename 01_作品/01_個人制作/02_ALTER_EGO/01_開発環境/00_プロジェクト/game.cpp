@@ -17,11 +17,6 @@
 #include "sound.h"
 #include "modelparts.h"
 #include "character.h"
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <fstream>
-#include <vector>
 
 //静的メンバ初期化
 CPlayer* CGame::m_pPlayer = nullptr;
@@ -67,8 +62,6 @@ HRESULT CGame::Init()
 
 	std::string filename = CManager::GetNextStage();
 
-	//filename = "data\\Stage\\SetStage002.txt";
-
 	std::ifstream ifs(filename);
 	if (!ifs)
 	{
@@ -83,7 +76,8 @@ HRESULT CGame::Init()
 	{
 		std::stringstream ss_n(n);
 		std::string t;
-
+		
+		// タブを読み込む
 		while (std::getline(ss_n, t, '\t'))
 		{
 			std::stringstream ss_t(t);
@@ -96,9 +90,9 @@ HRESULT CGame::Init()
 				v.push_back(pair);
 			}
 
-			int type = std::stoi(v[0]);
-			std::string key = (v.size() > 1) ? v[1] : "none";
-			float rotation = (v.size() > 2) ? std::stof(v[2]) : 0.0f;  // 3つ目の要素を回転情報として取得
+			int type = std::stoi(v[0]);									// 1つ目の要素をオブジェクトの種類として取得
+			float rotation = (v.size() > 1) ? std::stof(v[1]) : 0.0f;	// 2つ目の要素を回転情報として取得
+			std::string key = (v.size() > 2) ? v[2] : "none";			// 3つ目の要素をペア情報として取得
 
 			if (type == 100)
 			{
@@ -149,16 +143,16 @@ void CGame::Update()
 
 	if (Keyboard->GetTrigger(DIK_P) || JoyPad->GetJoyPadTrigger(CInput::JOYKEY_START) == true)
 	{
-		m_bPauseSwitch = m_bPauseSwitch ? false : true;
+		m_bPauseSwitch = m_bPauseSwitch ? false : true;		// ポーズ状態の切り替え
 
 		if (m_bPauseSwitch == true)
 		{
-			CManager::SetPaused(true);
+			CManager::SetPaused(m_bPauseSwitch);
 			m_pPause = CPause::Create();
-		}
+		} 
 		else if (m_bPauseSwitch == false)
 		{
-			CManager::SetPaused(false);
+			CManager::SetPaused(m_bPauseSwitch);
 		}
 	}
 

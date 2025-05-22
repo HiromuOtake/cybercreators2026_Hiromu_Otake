@@ -10,8 +10,6 @@
 
 #include "object3D.h"
 #include "input.h"
-#include <d3dx9.h>
-#include <vector>
 
 class CCloneCircle : public CObject3D
 {
@@ -30,6 +28,12 @@ public:
     D3DXVECTOR3 GetSelectedPosition();
     void Activate();
     void SetDeath()override;
+    static const int m_ERROR = 1;
+    static const int m_MAX_POSITION = 4;
+    static const int m_NUM_SILHOUETTE = 4;
+    static constexpr float m_INITIAL_VTX = 75.0f;
+    static constexpr float m_CIRCLE_SCALE = 3.5f;
+    static constexpr float m_CIRCLE_RADIUS = 250.0f;
 private:
     void DrawTexture(LPDIRECT3DTEXTURE9 pTexture, D3DXVECTOR3 position, D3DXVECTOR2 scale);
 

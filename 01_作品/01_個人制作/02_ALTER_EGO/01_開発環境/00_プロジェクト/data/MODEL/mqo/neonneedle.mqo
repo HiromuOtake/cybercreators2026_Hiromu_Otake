@@ -4,8 +4,8 @@ Format Text Ver 1.0
 Scene {
 	pos -174.7659 -536.4155 15258.7891
 	lookat 0.0000 0.0000 0.0000
-	head 0.0164
-	pich -0.0092
+	head -0.0836
+	pich 0.1608
 	bank -0.0100
 	ortho 0
 	zoom2 0.4915
@@ -18,7 +18,7 @@ Scene {
 	}
 }
 Material 1 {
-	"mat1" col(1.000 1.000 1.000 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) tex("C:\Users\student\Documents\Visual Studio 2019\NEON_RUNNER\data\TEXTURE\needle2.png") proj_type(1) proj_pos(0.000 -11.118 0.000) proj_scale(531.656 567.270 460.061) proj_angle(0.000 0.000 0.000)
+	"mat1" col(0.027 0.541 1.000 1.000) dif(0.800) amb(0.600) emi(0.000) spc(0.000) power(5.00) proj_type(1) proj_pos(0.000 -11.118 0.000) proj_scale(531.656 567.270 460.061) proj_angle(0.000 0.000 0.000)
 }
 Object "obj1" {
 	visible 15

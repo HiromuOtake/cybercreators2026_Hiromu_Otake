@@ -9,14 +9,12 @@
 #define _OBJECT_H_
 
 #include "main.h"
-#include <assert.h>
-#include <iostream>
 
 // 全オブジェクト基底クラス
 class CObject
 {
 public:
-	typedef enum
+	enum TYPE
 	{
 		TYPE_NONE = 0,
 		TYPE_PLAYER,
@@ -28,7 +26,7 @@ public:
 		TYPE_BG,
 		TYPE_TEXTURE,
 		TYPE_MAX,
-	}TYPE;
+	};
 	CObject(int nPriority = 3);
 	virtual ~CObject();
 	virtual HRESULT Init() = 0;

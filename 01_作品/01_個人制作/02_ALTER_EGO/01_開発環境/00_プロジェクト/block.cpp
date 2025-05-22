@@ -13,7 +13,6 @@
 #include "model.h"
 #include "bullet.h"
 #include "particlemanager.h"
-#include <random>
 
 CBlockButton::BUTTON_COLOR CBlockButton::m_LastPressedButton = CBlockButton::BUTTON_NORMAL;
 
@@ -198,7 +197,7 @@ HRESULT CBlockNeedle::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\neonneedle.x");
-	m_nTexIdx = CManager::GetTexture()->Regist("data\\Texture\\needle.png");
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -221,7 +220,7 @@ HRESULT CBlockButton::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\switch.x");
-	m_nTexIdx = -1;
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -248,7 +247,7 @@ HRESULT CBlockRedButton::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\switch_R.x");
-	m_nTexIdx = -1;
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -274,7 +273,7 @@ HRESULT CBlockBlueButton::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\switch_B.x");
-	m_nTexIdx = -1;
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -300,7 +299,7 @@ HRESULT CBlockDoor::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\door.x");
-	m_nTexIdx = -1;
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -329,7 +328,7 @@ HRESULT CBlockRedDoor::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\door_R.x");
-	m_nTexIdx = -1;
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -358,7 +357,7 @@ HRESULT CBlockBlueDoor::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\door_B.x");
-	m_nTexIdx = -1;
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -530,7 +529,7 @@ void CBlockButton::Update()
 
 			// パーティクル発生と効果音
 			CParticleManager* pParticleManager = CManager::GetParticleManager();
-			pParticleManager->EmitParticles(buttonPos, 40, 1.0f, 3.0f, D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f));
+			pParticleManager->EmitParticles(buttonPos, m_NUM_PARTICLE, m_PARTICLE_SIZE, m_PARTICLE_SPEED, D3DXCOLOR(m_PARTICLE_RED, m_PARTICLE_GREEN, m_PARTICLE_BLUE, m_PARTICLE_ALPHA));
 			pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_BUTON);
 		}
 		else
@@ -569,7 +568,7 @@ void CBlockButton::Update()
 
 				// パーティクル発生と効果音
 				CParticleManager* pParticleManager = CManager::GetParticleManager();
-				pParticleManager->EmitParticles(buttonPos, 40, 1.0f, 3.0f, D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f));
+				pParticleManager->EmitParticles(buttonPos, m_NUM_PARTICLE, m_PARTICLE_SIZE, m_PARTICLE_SPEED, D3DXCOLOR(m_PARTICLE_RED, m_PARTICLE_GREEN, m_PARTICLE_BLUE, m_PARTICLE_ALPHA));
 				pSound->PlaySound(CSound::SOUND_LABEL::SOUND_LABEL_SE_BUTON);
 			}
 		}
@@ -636,7 +635,7 @@ void CBlockDoor::Update()
 		//CBlockDoor::SetScale(D3DXVECTOR3(m_deleteDoor, m_deleteDoor, m_deleteDoor));
 
 		m_Timer++;
-		if (m_Timer >= 20)
+		if (m_Timer >= m_MAX_TIMER)
 		{
 			Uninit();
 			CObject::SetDeath();
@@ -650,7 +649,7 @@ void CBlockDoor::Update()
 //==============================================
 void CBlockGoal::Update()
 {
-	m_fGoalRot += 0.01f;
+	m_fGoalRot += m_GOAL_SPEED;
 	
 	CObjectX::SetRot(D3DXVECTOR3(0.0f, 0.0f, m_fGoalRot));
 
@@ -723,18 +722,14 @@ bool CBlockButton::IsCollisionPlayer(CPlayer* player)
 	// ボタンのサイズを取得
 	D3DXVECTOR3 buttonSize = GetSize();
 
-	// オフセット値の設定（X軸とZ軸は小さめ、Y軸はそのまま）
-	const float offsetXZ = 10.0;	// X軸とZ軸のオフセット値（当たり判定を縮小）
-	const float offsetY = 20.0f;	// Y軸のオフセット（必要なら微調整）
-
 	// 変換後の座標を使って当たり判定を行う
-	bool isOnTop = (transformedPos.y > 0.0f + offsetY && transformedPos.y < buttonSize.y - offsetY);
+	bool isOnTop = (transformedPos.y > 0.0f + m_OFFSET_Y && transformedPos.y < buttonSize.y - m_OFFSET_Y);
 
 	// X軸とZ軸の範囲内にいるかを判定（オフセットを適用）
-	return (transformedPos.x > -buttonSize.x + offsetXZ &&
-		transformedPos.x < buttonSize.x - offsetXZ &&
-		transformedPos.z > -buttonSize.z + offsetXZ &&
-		transformedPos.z < buttonSize.z - offsetXZ &&
+	return (transformedPos.x > -buttonSize.x + m_OFFSET_XZ &&
+		transformedPos.x < buttonSize.x - m_OFFSET_XZ &&
+		transformedPos.z > -buttonSize.z + m_OFFSET_XZ &&
+		transformedPos.z < buttonSize.z - m_OFFSET_XZ &&
 		isOnTop);
 }
 
@@ -761,8 +756,8 @@ bool CBlockButton::IsCollisionClone(CClone* clone)
 	D3DXVECTOR3 buttonSize = GetSize();
 
 	// オフセット値の設定（X軸とZ軸は小さめ、Y軸はそのまま）
-	const float offsetXZ = 20.0;	// X軸とZ軸のオフセット値（当たり判定を縮小）
-	const float offsetY = 20.0f;	// Y軸のオフセット（必要なら微調整）
+	const float offsetXZ = m_OFFSET_XZ;	// X軸とZ軸のオフセット値（当たり判定を縮小）
+	const float offsetY = m_OFFSET_Y;	// Y軸のオフセット（必要なら微調整）
 
 	// 変換後の座標を使って当たり判定を行う
 	bool isOnTop = (transformedPos.y > 0.0f + offsetY && transformedPos.y < buttonSize.y - offsetY);
@@ -882,7 +877,7 @@ CBlockBlueButton* CBlockBlueButton::Create(D3DXVECTOR3 pos, BUTTON_COLOR color)
 //=====================================================
 CBlockDoor* CBlockDoor::Create(D3DXVECTOR3 pos, BLOCK nType, DOOR_COLOR color)
 {
-	CBlockDoor* pBlockDoor = new CBlockDoor(3, color);
+	CBlockDoor* pBlockDoor = new CBlockDoor();
 
 	if (pBlockDoor != nullptr)
 	{
@@ -999,18 +994,18 @@ bool& CBlockButton::GetOpenDoor()
 void CBlockButton::SetMatColor(D3DMATERIAL9* pMat, int nMatIdx)
 {
 	// マテリアルの見た目の初期化
-	if (nMatIdx == 2)
+	if (nMatIdx == m_MODEL_IDX)
 	{
-		pMat->Diffuse.g = pMat->Diffuse.b = pMat->Diffuse.r = 1.0f;
+		pMat->Diffuse.g = pMat->Diffuse.b = pMat->Diffuse.r = m_ON_BUTTON_COLOR;
 	}
 
 	// ボタンが押せない状態なら灰色にする
 	if ((m_Color == BUTTON_RED && m_LastPressedButton == BUTTON_RED) ||
 		(m_Color == BUTTON_BLUE && m_LastPressedButton == BUTTON_BLUE))
 	{
-		if (nMatIdx == 2)
+		if (nMatIdx == m_MODEL_IDX)
 		{
-			pMat->Diffuse.g = pMat->Diffuse.b = pMat->Diffuse.r = 0.5f;
+			pMat->Diffuse.g = pMat->Diffuse.b = pMat->Diffuse.r = m_OFF_BUTTON_COLOR;
 		}
 		return; // ここで処理を終了し、ボタンの色を灰色に固定する
 	}
@@ -1018,9 +1013,9 @@ void CBlockButton::SetMatColor(D3DMATERIAL9* pMat, int nMatIdx)
 	{
 		if (m_bOpen == true)
 		{
-			if (nMatIdx == 2)
+			if (nMatIdx == m_MODEL_IDX)
 			{
-				pMat->Diffuse.g = pMat->Diffuse.b = pMat->Diffuse.r = 0.5f;
+				pMat->Diffuse.g = pMat->Diffuse.b = pMat->Diffuse.r = m_OFF_BUTTON_COLOR;
 			}
 			return; // ここで処理を終了し、ボタンの色を灰色に固定する
 		}
@@ -1031,7 +1026,7 @@ void CBlockButton::SetMatColor(D3DMATERIAL9* pMat, int nMatIdx)
 	{
 		if (m_bOpen == false)
 		{
-			if (nMatIdx == 2)
+			if (nMatIdx == m_MODEL_IDX)
 			{
 				pMat->Diffuse.g = pMat->Diffuse.b = 0.0f;
 			}
@@ -1042,7 +1037,7 @@ void CBlockButton::SetMatColor(D3DMATERIAL9* pMat, int nMatIdx)
 	{
 		if (m_bOpen == false)
 		{
-			if (nMatIdx == 2)
+			if (nMatIdx == m_MODEL_IDX)
 			{
 				pMat->Diffuse.g = pMat->Diffuse.r = 0.0f;
 			}
@@ -1053,7 +1048,7 @@ void CBlockButton::SetMatColor(D3DMATERIAL9* pMat, int nMatIdx)
 	{
 		if (m_bOpen == false)
 		{
-			if (nMatIdx == 2)
+			if (nMatIdx == m_MODEL_IDX)
 			{
 				pMat->Diffuse.g = pMat->Diffuse.b = 0.0f;
 			}

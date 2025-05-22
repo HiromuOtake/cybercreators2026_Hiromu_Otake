@@ -37,7 +37,7 @@ HRESULT CObject3D::Init()
 	pDevice = pRenderer->GetDevice();
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -50,10 +50,10 @@ HRESULT CObject3D::Init()
 	m_pVtxBuff->Lock(0, 0, (void**)&pVtx, 0);
 
 	//頂点座標の設定
-	pVtx[0].pos = D3DXVECTOR3(-1000.0f, 0.0f, 1000.0f);
-	pVtx[1].pos = D3DXVECTOR3(1000.0f, 0.0f, 1000.0f);
-	pVtx[2].pos = D3DXVECTOR3(-1000.0f, 0.0f, -1000.0f);
-	pVtx[3].pos = D3DXVECTOR3(1000.0f, 0.0f, -1000.0f);
+	pVtx[0].pos = D3DXVECTOR3(-0.0f, 0.0f, 0.0f);
+	pVtx[1].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	pVtx[2].pos = D3DXVECTOR3(-0.0f, 0.0f, -0.0f);
+	pVtx[3].pos = D3DXVECTOR3(0.0f, 0.0f, -0.0f);
 
 	//法線ベクトルの設定
 	pVtx[0].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);

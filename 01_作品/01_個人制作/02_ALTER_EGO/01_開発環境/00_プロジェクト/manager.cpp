@@ -24,7 +24,7 @@ int CManager::m_nMode = 0;
 std::string CManager::m_nextStageFile = "";
 CScene::MODE CManager::m_nextSceneMode = CScene::MODE_TITLE;
 bool CManager::m_bPaused = false;
-CFade* CManager::m_pFade = nullptr;
+//CFade* CManager::m_pFade = nullptr;
 
 //======================================================
 // コンストラクタ
@@ -144,12 +144,12 @@ void CManager::Uninit ()
 		delete m_pParticleManager;
 		m_pParticleManager = nullptr;
 	}
-	if (m_pFade != nullptr)
-	{
-		m_pFade->Uninit();
-		delete m_pFade;
-		m_pFade = nullptr;
-	}
+	//if (m_pFade != nullptr)
+	//{
+	//	m_pFade->Uninit();
+	//	delete m_pFade;
+	//	m_pFade = nullptr;
+	//}
 
 	CObject::DeleateProcess();
 }
@@ -160,12 +160,12 @@ void CManager::Uninit ()
 void CManager::Update()
 {
 	//char debugMsg[256];
-
+	//
 	//if (m_pFade != nullptr)
 	//{
 	//	sprintf(debugMsg, "[CManager::Update] m_pFade のアドレス: %p\n", m_pFade);
 	//	OutputDebugStringA(debugMsg);
-
+	//
 	//	OutputDebugStringA("[CManager::Update] m_pFade->Update() を実行します\n");
 	//	m_pFade->Update();
 	//	OutputDebugStringA("[CManager::Update] m_pFade->Update() 完了\n");
@@ -216,7 +216,7 @@ void CManager::Update()
 
 			if (m_nMode >= (int)CScene::MODE::MODE_MAX)
 			{
-				m_nMode = 1;
+				m_nMode = m_MODE_RESET;
 			}
 			SetMode(static_cast<CScene::MODE>(m_nMode));
 		}
@@ -242,33 +242,33 @@ void CManager::Draw()
 	}
 }
 
-//======================================================
-// シーン取得
-//======================================================
-CFade* CManager::GetFade()
-{
-	return m_pFade;
-}
-
-void CManager::SetFadeInstance(CFade* fade)
-{
-	m_pFade = fade;
-}
+////======================================================
+//// シーン取得
+////======================================================
+//CFade* CManager::GetFade()
+//{
+//	return m_pFade;
+//}
+//
+//void CManager::SetFadeInstance(CFade* fade)
+//{
+//	m_pFade = fade;
+//}
 
 //======================================================
 // モード設定
 //======================================================
 void CManager::SetMode(CScene::MODE mode)
 {
-	if (m_pFade == nullptr)
-	{
-		OutputDebugStringA("[SetMode] m_pFade が NULL\n");
-	}
-
-	char debugMsg[256];
-
-	sprintf(debugMsg, "[SetMode] 実行前の m_pFade: %p\n", m_pFade);
-	OutputDebugStringA(debugMsg);
+	//if (m_pFade == nullptr)
+	//{
+	//	OutputDebugStringA("[SetMode] m_pFade が NULL\n");
+	//}
+	//
+	//char debugMsg[256];
+	//
+	//sprintf(debugMsg, "[SetMode] 実行前の m_pFade: %p\n", m_pFade);
+	//OutputDebugStringA(debugMsg);
 
 	OutputDebugStringA("[SetMode] オブジェクトを解放します\n");
 	CObject::ReleaseAll();
@@ -286,17 +286,17 @@ void CManager::SetMode(CScene::MODE mode)
 	OutputDebugStringA("[SetMode] 新しいシーンを作成します\n");
 	m_pScene = CScene::Create(mode);
 
-	OutputDebugStringA("[SetMode] CFade を作成します\n");
+	//OutputDebugStringA("[SetMode] CFade を作成します\n");
 	//m_pFade = CFade::Create(mode);
-
-	sprintf(debugMsg, "[SetMode] 作成後の m_pFade: %p\n", m_pFade);
-	OutputDebugStringA(debugMsg);
-
-	SetFadeInstance(m_pFade);
-
-	if (m_pFade != nullptr)
-	{
-		OutputDebugStringA("[SetMode] フェードアウトを開始します\n");
-		m_pFade->SetFade(CFade::FADE_OUT, mode);
-	}
+	//
+	//sprintf(debugMsg, "[SetMode] 作成後の m_pFade: %p\n", m_pFade);
+	//OutputDebugStringA(debugMsg);
+	//
+	//SetFadeInstance(m_pFade);
+	//
+	//if (m_pFade != nullptr)
+	//{
+	//	OutputDebugStringA("[SetMode] フェードアウトを開始します\n");
+	//	m_pFade->SetFade(CFade::FADE_OUT, mode);
+	//}
 }

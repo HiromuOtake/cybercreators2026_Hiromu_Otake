@@ -8,7 +8,6 @@
 #ifndef _RENDERER_H_
 #define _RENDERER_H_
 
-#include <Windows.h>
 #include "d3dx9.h"
 
 class CRenderer

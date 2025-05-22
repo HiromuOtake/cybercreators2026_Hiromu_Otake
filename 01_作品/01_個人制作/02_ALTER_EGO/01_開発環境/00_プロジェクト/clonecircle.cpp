@@ -9,7 +9,6 @@
 #include "renderer.h"
 #include "manager.h"
 #include "game.h"
-#include <d3dx9.h>
 
 //==============================================
 // コンストラクタ
@@ -36,7 +35,7 @@ HRESULT CCloneCircle::Init()
     LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();
 
     // 頂点バッファの生成
-    pDevice->CreateVertexBuffer(sizeof(CUSTOMVERTEX) * 4,
+    pDevice->CreateVertexBuffer(sizeof(CUSTOMVERTEX) * NUM_VTX,
         D3DUSAGE_WRITEONLY,
         D3DFVF_CUSTOMVERTEX,
         D3DPOOL_MANAGED, 
@@ -48,7 +47,7 @@ HRESULT CCloneCircle::Init()
     m_nNormalTexture = CManager::GetTexture()->Regist("data\\Texture\\silhouette000.png");
     m_nSelectTexture = CManager::GetTexture()->Regist("data\\Texture\\silhouette001.png");
 
-    if (m_nCircleTexture == -1 || m_nNormalTexture == -1 || m_nSelectTexture == -1)
+    if (m_nCircleTexture == -m_ERROR || m_nNormalTexture == -m_ERROR || m_nSelectTexture == -m_ERROR)
     {
         return E_FAIL;
     }
@@ -57,10 +56,10 @@ HRESULT CCloneCircle::Init()
 
     m_pVtxBuff->Lock(0, 0, (void**)&vertices, 0);
 
-    vertices[0] = { D3DXVECTOR3(-75.0f,  75.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };
-    vertices[1] = { D3DXVECTOR3(75.0f,  75.0f, 0.0f), D3DXVECTOR2(1.0f, 0.0f) };
-    vertices[2] = { D3DXVECTOR3(-75.0f, -75.0f, 0.0f), D3DXVECTOR2(0.0f, 1.0f) };
-    vertices[3] = { D3DXVECTOR3(75.0f, -75.0f, 0.0f), D3DXVECTOR2(1.0f, 1.0f) };
+    vertices[0] = { D3DXVECTOR3(-m_INITIAL_VTX,  m_INITIAL_VTX, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };
+    vertices[1] = { D3DXVECTOR3(m_INITIAL_VTX,  m_INITIAL_VTX, 0.0f), D3DXVECTOR2(1.0f, 0.0f) };
+    vertices[2] = { D3DXVECTOR3(-m_INITIAL_VTX, -m_INITIAL_VTX, 0.0f), D3DXVECTOR2(0.0f, 1.0f) };
+    vertices[3] = { D3DXVECTOR3(m_INITIAL_VTX, -m_INITIAL_VTX, 0.0f), D3DXVECTOR2(1.0f, 1.0f) };
 
     m_pVtxBuff->Unlock();
 
@@ -116,12 +115,12 @@ void CCloneCircle::Draw()
         LPDIRECT3DTEXTURE9 pCircleTex = CManager::GetTexture()->GetAddress(m_nCircleTexture);
         if (pCircleTex)
         {
-            DrawTexture(pCircleTex, m_pos, D3DXVECTOR2(3.5f, 3.5f));
+            DrawTexture(pCircleTex, m_pos, D3DXVECTOR2(m_CIRCLE_SCALE, m_CIRCLE_SCALE));
         }
 
         // クローン候補描画
-        const float radius = 250.0f;
-        D3DXVECTOR3 positions[4] =
+        const float radius = m_CIRCLE_RADIUS;
+        D3DXVECTOR3 positions[m_MAX_POSITION] =
         {
             { m_pos.x, m_pos.y + radius, m_pos.z },  // 上
             { m_pos.x, m_pos.y - radius, m_pos.z },  // 下
@@ -130,7 +129,7 @@ void CCloneCircle::Draw()
         };
 
         // クローン描画
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < m_NUM_SILHOUETTE; i++)
         {
             int textureID = (i == m_nSelectedIndex) ? m_nSelectTexture : m_nNormalTexture;
             LPDIRECT3DTEXTURE9 pTexture = CManager::GetTexture()->GetAddress(textureID);
@@ -200,7 +199,7 @@ void CCloneCircle::DrawTexture(LPDIRECT3DTEXTURE9 pTexture, D3DXVECTOR3 position
 //==============================================
 D3DXVECTOR3 CCloneCircle::GetSelectedPosition()
 {
-    const float radius = 250.0f;
+    const float radius = m_CIRCLE_RADIUS;
     switch (m_nSelectedIndex)
     {
     case 0: return { m_pos.x, m_pos.y + radius, m_pos.z };  // 上

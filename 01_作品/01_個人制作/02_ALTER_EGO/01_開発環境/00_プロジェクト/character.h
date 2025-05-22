@@ -14,7 +14,7 @@ public:
 	static const int m_NUM_MOTION = 6;
 	static const int m_NUM_MODEL_PARTS = 10;
 	static const int m_MAX_LETTER = 496;
-	typedef enum
+	enum MOTION
 	{
 		MOTION_NEUTRAL = 0,
 		MOTION_MOVE,
@@ -23,35 +23,35 @@ public:
 		MOTION_RANDING,
 		MOTION_NONE,
 		MOTION_MAX
-	}MOTION;
+	};
 
 	//==============================================
 	//キーの構造体
 	//==============================================
-	typedef struct
+	struct KEY
 	{
 		D3DXVECTOR3 pos;							 // モーションの位置
 		D3DXVECTOR3 rot;							 // モーションの移動量
-	}KEY;
+	};
 
 	//==============================================
 	//キーセットの構造体
 	//==============================================
-	typedef struct
+	struct KEYSET
 	{
 		float nFlame;					// モーションが動く時間
 		KEY aKey[m_NUM_MODEL_PARTS];
-	}KEYSET;
+	};
 
 	//==============================================
 	//モーションセットの構造体
 	//==============================================
-	typedef struct
+	struct MOTIONSET
 	{
 		int nLoop;					// モーションがループするかどうか
 		int NumKey;					// モーションのキーがいくつあるか
 		KEYSET aKeySet[m_NUM_MOTION];	// モーションの数
-	}MOTIONSET;
+	};
 
 	CCharacter(int nPriority = 3);
 	~CCharacter()override;

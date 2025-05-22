@@ -7,7 +7,6 @@
 
 #include "manager.h"
 #include "objectX.h"
-#include <iostream>
 
 // É}ÉNÉçíËã`
 #define ITEM_WIDTH		(100.0f)
@@ -16,12 +15,12 @@
 class CItem : public CObjectX
 {
 public:
-	typedef enum
+	enum ITEM
 	{
 		ITEM_NONE = 0,
 		ITEM_STAR,
 		ITEM_MAX
-	}ITEM;
+	};
 	CItem(int nPriority = 3);
 	~CItem();
 	HRESULT Init() override;
@@ -33,6 +32,8 @@ public:
 	void Draw()override;
 	void SetDeath()override;
 	ITEM m_ItemType;
+	static const int m_NONE_TEX = 1;
+	static constexpr float m_ITEM_ROT = 0.05f;
 private:
 	int m_nModelIdx;
 	int m_nTexIdx;

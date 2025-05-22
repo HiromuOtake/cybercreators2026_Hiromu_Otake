@@ -11,7 +11,7 @@ class CScene
 {
 public:
 	// 画面の種類
-	typedef enum
+	enum MODE
 	{
 		MODE_NONE = 0,
 		MODE_TITLE,
@@ -21,7 +21,7 @@ public:
 		MODE_GAME,
 		MODE_RESULT,
 		MODE_MAX,
-	}MODE;
+	};
 	CScene();							// コンストラクタ
 	virtual ~CScene();					// デストラクタ
 	virtual HRESULT Init();				// 初期設定

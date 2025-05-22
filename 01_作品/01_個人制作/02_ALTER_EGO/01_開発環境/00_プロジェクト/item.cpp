@@ -12,7 +12,6 @@
 #include "texture.h"
 #include "model.h"
 #include "particlemanager.h"
-#include <random>
 
 //==============================================
 // コンストラクタ
@@ -43,7 +42,7 @@ HRESULT CItem::Init()
 	CModel* pModel = CManager::GetModel();
 
 	m_nModelIdx = pModel->Regist("data\\MODEL\\x\\Item.x");
-	m_nTexIdx = -1;
+	m_nTexIdx = -m_NONE_TEX;
 
 	CObjectX::BindModel(pModel->GetBuffMat(m_nModelIdx),
 		pModel->GetNumMat(m_nModelIdx),
@@ -79,7 +78,7 @@ void CItem::Update()
 		D3DXMatrixMultiply(&m_matWorld, &matRotation, &m_matWorld);
 	}
 
-	m_fItemRotation += 0.05f;
+	m_fItemRotation += m_ITEM_ROT;
 
 	CObjectX::SetRot(D3DXVECTOR3(0.0f, m_fItemRotation, 0.0f));
 

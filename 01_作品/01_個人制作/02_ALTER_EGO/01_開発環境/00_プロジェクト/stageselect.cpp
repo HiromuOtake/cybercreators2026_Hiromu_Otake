@@ -9,9 +9,6 @@
 #include "manager.h"
 #include "texture.h"
 #include "block.h"
-#include <cassert>
-#include <sstream>
-#include <iomanip>
 
 //=================================
 // コンストラクタ
@@ -45,10 +42,10 @@ HRESULT CStageSelect::Init()
     CBg::Create(CScene::MODE::MODE_STAGESELECT);
 
     // ステージテクスチャを生成
-    float fInitialPointX = 140.0f;
-    float fInitialPointY = 450.0f;
+    float fInitialPointX = 250.0f;
+    float fInitialPointY = 400.0f;
 
-    for (int i = 0; i < m_NUM_STAGE; i++, fInitialPointX += 250.0f)
+    for (int i = 0; i < m_NUM_STAGE; i++, fInitialPointX += 400.0f)
     {
         std::ostringstream filename;
         filename << "data\\Texture\\stage" << std::setfill('0') << std::setw(2) << (i + 1) << ".png";
@@ -62,12 +59,12 @@ HRESULT CStageSelect::Init()
         m_pObj[i] = CObject2D::Create(
             CManager::GetTexture()->GetAddress(m_stageTextures[i]),
             D3DXVECTOR3(fInitialPointX, fInitialPointY, 0.0f),
-            200.0f, 200.0f, 1.0f, alpha);
+            275.0f, 275.0f, 1.0f, alpha);
 
-        m_pItemTex[i] = CObject2D::Create(
-            CManager::GetTexture()->GetAddress(m_ItemTexIdx),
-            D3DXVECTOR3(fInitialPointX, 275.0f, 0.0f),
-            100.0f, 100.0f, 1.0f, 1.0f);
+        //m_pItemTex[i] = CObject2D::Create(
+        //    CManager::GetTexture()->GetAddress(m_ItemTexIdx),
+        //    D3DXVECTOR3(fInitialPointX, 275.0f, 0.0f),
+        //    100.0f, 100.0f, 1.0f, 1.0f);
 
         //if ((i + 1) % 5 == 0) // 5枚ごとに列を切り替え
         //{
@@ -122,15 +119,7 @@ void CStageSelect::Draw()
 void CStageSelect::SelectStage()
 {
     // 上下左右キー入力
-    if (m_Keyboard->GetTrigger(DIK_W) || m_Keyboard->GetTrigger(DIK_UP) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_UP) == true)
-    {
-        m_selectedStage = (m_selectedStage - 5 + m_NUM_STAGE) % m_NUM_STAGE; // 上段へ
-    }
-    else if (m_Keyboard->GetTrigger(DIK_S) || m_Keyboard->GetTrigger(DIK_DOWN) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_DOWN) == true)
-    {
-        m_selectedStage = (m_selectedStage + 5) % m_NUM_STAGE; // 下段へ
-    }
-    else if (m_Keyboard->GetTrigger(DIK_D) || m_Keyboard->GetTrigger(DIK_RIGHT) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_RIGHT) == true)
+     if (m_Keyboard->GetTrigger(DIK_D) || m_Keyboard->GetTrigger(DIK_RIGHT) || m_JoyPad->GetJoyPadTrigger(CInput::JOYKEY_RIGHT) == true)
     {
         m_selectedStage = (m_selectedStage + 1) % m_NUM_STAGE; // 右隣のステージ
     }

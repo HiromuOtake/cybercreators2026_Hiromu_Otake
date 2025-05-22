@@ -11,8 +11,8 @@
 //=====================================
 // コンストラクタ
 //=====================================
-CBillboard::CBillboard(int nPriority) : CObject(nPriority), m_pos{ 0.0f,0.0f,0.0f }, m_min{ 0.0f,0.0f,0.0f }, m_max{ 0.0f,0.0f,0.0f }, m_size{ 0.0f,0.0f,0.0f }
-, m_pTexture(nullptr), m_pVtxBuff(nullptr), m_pMesh(nullptr), m_pBuffMat(nullptr), m_nNumVtx(0), m_sizeFVF(0)
+CBillboard::CBillboard(int nPriority) : CObject(nPriority), m_pos{ RESET_VEX3 }, m_min{ RESET_VEX3 }, m_max{ RESET_VEX3 }, m_size{ RESET_VEX3 }
+, m_pTexture(nullptr), m_pVtxBuff(nullptr), m_pMesh(nullptr), m_pBuffMat(nullptr), m_nNumVtx(RESET_INT), m_sizeFVF(RESET_INT)
 {
 
 }
@@ -32,10 +32,10 @@ HRESULT CBillboard::Init()
 {
 	LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderere()->GetDevice();;		//デバイスへのポインタ
 
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);		//向き
+	m_rot = RESET_VEX3;		//向き
 
 	//頂点バッファの生成
-	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * 4,
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NUM_VTX,
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
 		D3DPOOL_MANAGED,
@@ -60,10 +60,10 @@ HRESULT CBillboard::Init()
 	pVtx[3].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
 	//頂点カラーの設定
-	pVtx[0].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[1].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[2].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
-	pVtx[3].col = D3DXCOLOR(0.0f, 1.0f, 1.0f, 1.0f);
+	pVtx[0].col = RESET_RGB;
+	pVtx[1].col = RESET_RGB;
+	pVtx[2].col = RESET_RGB;
+	pVtx[3].col = RESET_RGB;
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);

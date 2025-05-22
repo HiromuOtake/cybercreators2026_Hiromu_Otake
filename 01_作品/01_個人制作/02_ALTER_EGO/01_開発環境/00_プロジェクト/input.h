@@ -19,7 +19,7 @@ class CInput
 {
 public:
     //キーの種類
-    typedef enum
+    enum JOYKEY
     {
         JOYKEY_UP = 0,
         JOYKEY_DOWN,
@@ -38,28 +38,28 @@ public:
         JOYKEY_X,
         JOYKEY_Y,
         JOYKEY_MAX
-    }JOYKEY;
+    };
 
     //スティックの番号
-    typedef enum
+    enum STICKTYPE
     {
         STICKTYPE_LEFT = 0, // 左スティック
         STICKTYPE_RIGHT, // 右スティック
         STICKTYPE_MAX
-    }STICKTYPE;
+    };
 
     //スティックの方向
-    typedef enum
+    enum STICKANGLE
     {
         STICKANGLE_UP = 0, // 上
         STICKANGLE_DOWN,   // 下
         STICKANGLE_LEFT,   // 左
         STICKANGLE_RIGHT,  // 右
         STICKANGLE_MAX,
-    }STICKANGLE;
+    };
 
     //スティックの入力情報
-    typedef struct
+    struct STICKINPUT
     {
         float afTplDiameter[STICKTYPE_MAX];                      // スティックの倒し具合
         float afAngle[STICKTYPE_MAX];                            // スティックの角度
@@ -67,7 +67,7 @@ public:
         bool abAngleTrigger[STICKTYPE_MAX][STICKANGLE_MAX];      // スティックの方向トリガー情報
         bool abAngleRepeat[STICKTYPE_MAX][STICKANGLE_MAX];       // スティックの方向リピート情報
         bool abAngleRelease[STICKTYPE_MAX][STICKANGLE_MAX];      // スティックの方向リリース情報
-    }STICKINPUT;
+    };
 
     CInput();
     ~CInput();

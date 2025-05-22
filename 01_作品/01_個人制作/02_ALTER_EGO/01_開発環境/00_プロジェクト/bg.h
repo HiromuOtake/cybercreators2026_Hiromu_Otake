@@ -8,7 +8,6 @@
 #include "manager.h"
 #include "scene.h"
 #include "object2D.h"
-#include <d3dx9.h>
 
 // 頂点フォーマット
 struct VTX_2D
@@ -31,6 +30,11 @@ public:
 	static void DrawTexture(int textureID, D3DXVECTOR2 position, D3DXVECTOR2 scale = { 1.0f, 1.0f }, float alpha = 1.0f);
 	static CBg* Create(CScene::MODE mode);
 	void SetDeath()override;
+	static const int m_NUM_VTX = 4;
+	static const int m_MAX_LETTER = 256;
+	static const int m_ERROR_ID = 1;
+	static constexpr float m_TEX_SCROLL_SPEED = 2.0f;
+
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;		// 頂点バッファ
 	LPDIRECT3DTEXTURE9 m_pTexture;			// テクスチャ
